@@ -3,6 +3,7 @@ import 'user_data_screen.dart';
 import 'couple_screen.dart';
 import 'about_app_screen.dart';
 import 'theme_screen.dart';
+import 'login_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -60,6 +61,18 @@ class ProfileScreen extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const AboutAppScreen()),
+              );
+            },
+          ),
+          // Card de logout
+          _ProfileScreenItem(
+            texto: 'Sair',
+            descricao: 'Desconectar da sua conta.',
+            icone: Icons.logout,
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const LoginScreen()),
               );
             },
           ),

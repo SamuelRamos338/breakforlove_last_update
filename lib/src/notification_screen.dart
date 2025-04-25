@@ -9,46 +9,46 @@ class NotificationScreen extends StatefulWidget {
 }
 
 class _NotificationScreenState extends State<NotificationScreen> with SingleTickerProviderStateMixin {
+  int _hours = 0;
+  int _minutes = 0;
+  int _seconds = 30;
   late AnimationController _controller;
-  int _totalSeconds = 30;
-  int _currentSeconds = 30;
-  bool _isRunning = false;
+  late Animation<double> _scaleAnim;
+  bool _isTimerRunning = false;
   Timer? _timer;
+  int _remainingMilliseconds = 30000;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(seconds: _totalSeconds),
-    );
-  }
-
-  void _setTimer(int seconds) {
-    _timer?.cancel();
-    _controller.dispose();
-    _controller = AnimationController(
-      vsync: this,
-      duration: Duration(seconds: seconds),
-    );
-    setState(() {
-      _totalSeconds = seconds;
-      _currentSeconds = seconds;
-      _isRunning = false;
+      duration: Duration(milliseconds: _remainingMilliseconds),
+    )..addListener(() {
+      setState(() {});
     });
+    _scaleAnim = Tween<double>(begin: 1.0, end: 1.08).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOutCubic),
+    );
   }
 
   void _startTimer() {
-    if (_isRunning) return;
+    if (_isTimerRunning || (_hours == 0 && _minutes == 0 && _seconds == 0)) return;
     setState(() {
-      _isRunning = true;
-      _currentSeconds = _totalSeconds;
-      _controller.reset();
-      _controller.forward();
+      _remainingMilliseconds = Duration(hours: _hours, minutes: _minutes, seconds: _seconds).inMilliseconds;
+      _isTimerRunning = true;
+      _controller.duration = Duration(milliseconds: _remainingMilliseconds);
+      _controller.reverse(from: 1.0);
     });
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (_currentSeconds > 0) {
-        setState(() => _currentSeconds--);
+
+    _timer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
+      if (_remainingMilliseconds > 0) {
+        setState(() {
+          _remainingMilliseconds -= 100;
+          _hours = _remainingMilliseconds ~/ 3600000;
+          _minutes = (_remainingMilliseconds % 3600000) ~/ 60000;
+          _seconds = (_remainingMilliseconds % 60000) ~/ 1000;
+        });
       } else {
         _stopTimer();
       }
@@ -58,103 +58,163 @@ class _NotificationScreenState extends State<NotificationScreen> with SingleTick
   void _stopTimer() {
     _timer?.cancel();
     _controller.stop();
-    setState(() => _isRunning = false);
+    setState(() => _isTimerRunning = false);
+  }
+
+  void _editTime() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text("Selecione o Tempo", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _buildTimePicker("Horas", _hours, (val) => setState(() => _hours = val)),
+                  _buildTimePicker("Minutos", _minutes, (val) => setState(() => _minutes = val)),
+                  _buildTimePicker("Segundos", _seconds, (val) => setState(() => _seconds = val)),
+                ],
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  if (_hours == 0 && _minutes == 0 && _seconds == 0) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("O tempo não pode ser zero!")),
+                    );
+                    return;
+                  }
+                  setState(() => _remainingMilliseconds = Duration(hours: _hours, minutes: _minutes, seconds: _seconds).inMilliseconds);
+                  Navigator.pop(context);
+                },
+                style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.primary),
+                child: const Text("Confirmar", style: TextStyle(color: Colors.white)),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   @override
   void dispose() {
-    _timer?.cancel();
     _controller.dispose();
+    _stopTimer();
     super.dispose();
-  }
-
-  String _formatTime(int seconds) {
-    final min = (seconds ~/ 60).toString().padLeft(2, '0');
-    final sec = (seconds % 60).toString().padLeft(2, '0');
-    return '$min:$sec';
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final bgColor = theme.colorScheme.surface.withOpacity(0.95);
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Notificações')),
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox(
-              width: 220,
-              height: 220,
-              child: AnimatedBuilder(
-                animation: _controller,
-                builder: (context, child) {
-                  // Progresso reverso: barra esvaziando
-                  return CustomPaint(
-                    painter: TimerPainter(
-                      progress: 1.0 - _controller.value,
-                      backgroundColor: Colors.grey.shade300,
-                      color: Colors.pink,
-                    ),
-                    child: Center(
-                      child: Text(
-                        _formatTime(_currentSeconds),
-                        style: const TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
+      backgroundColor: bgColor,
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const SizedBox(height: 40),
+          GestureDetector(
+            onTap: _editTime,
+            child: AnimatedScale(
+              scale: _isTimerRunning ? _scaleAnim.value : 1.0,
+              duration: const Duration(milliseconds: 400),
+              curve: Curves.easeInOutCubic,
+              child: SizedBox(
+                width: 260,
+                height: 260,
+                child: AnimatedBuilder(
+                  animation: _controller,
+                  builder: (context, child) {
+                    return CustomPaint(
+                      painter: TimerPainter(
+                        progress: _controller.value,
+                        backgroundColor: theme.colorScheme.surface.withOpacity(0.5),
+                        progressColor: theme.colorScheme.primary.withOpacity(0.85),
+                        glowColor: theme.colorScheme.primary.withOpacity(0.25),
                       ),
-                    ),
-                  );
-                },
+                      child: Center(
+                        child: Text(
+                          "${_hours.toString().padLeft(2, '0')}:${_minutes.toString().padLeft(2, '0')}:${_seconds.toString().padLeft(2, '0')}",
+                          style: TextStyle(
+                            fontSize: 38,
+                            fontWeight: FontWeight.bold,
+                            color: theme.colorScheme.primary,
+                            shadows: [
+                              Shadow(
+                                color: theme.colorScheme.primary.withOpacity(0.18),
+                                blurRadius: 12,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
-            const SizedBox(height: 30),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton.icon(
-                  onPressed: _isRunning ? _stopTimer : null,
-                  icon: const Icon(Icons.stop),
-                  label: const Text('Parar'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                  ),
+          ),
+          const SizedBox(height: 30),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              ElevatedButton.icon(
+                onPressed: _isTimerRunning ? _stopTimer : null,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: theme.colorScheme.error.withOpacity(0.9),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                  elevation: 0,
                 ),
-                const SizedBox(width: 20),
-                ElevatedButton.icon(
-                  onPressed: !_isRunning ? _startTimer : null,
-                  icon: const Icon(Icons.play_arrow),
-                  label: const Text('Iniciar'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                  ),
+                icon: const Icon(Icons.stop, color: Colors.white),
+                label: const Text('Parar', style: TextStyle(color: Colors.white)),
+              ),
+              ElevatedButton.icon(
+                onPressed: _startTimer,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: theme.colorScheme.primary.withOpacity(0.9),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                  elevation: 0,
                 ),
-              ],
-            ),
-            const SizedBox(height: 24),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  onPressed: !_isRunning ? () => _setTimer(30) : null,
-                  child: const Text('30s'),
-                ),
-                const SizedBox(width: 10),
-                ElevatedButton(
-                  onPressed: !_isRunning ? () => _setTimer(60) : null,
-                  child: const Text('1m'),
-                ),
-                const SizedBox(width: 10),
-                ElevatedButton(
-                  onPressed: !_isRunning ? () => _setTimer(120) : null,
-                  child: const Text('2m'),
-                ),
-              ],
-            ),
-          ],
-        ),
+                icon: const Icon(Icons.play_arrow, color: Colors.white),
+                label: const Text('Iniciar', style: TextStyle(color: Colors.white)),
+              ),
+            ],
+          ),
+        ],
       ),
+    );
+  }
+
+  Widget _buildTimePicker(String label, int value, ValueChanged<int> onChanged) {
+    return Column(
+      children: [
+        Text(label, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+        SizedBox(
+          height: 120,
+          width: 80,
+          child: ListWheelScrollView.useDelegate(
+            controller: FixedExtentScrollController(initialItem: value),
+            itemExtent: 40,
+            physics: const FixedExtentScrollPhysics(),
+            onSelectedItemChanged: (val) => onChanged(val),
+            childDelegate: ListWheelChildLoopingListDelegate(
+              children: List.generate(60, (index) => Center(child: Text(index.toString().padLeft(2, '0')))),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -162,39 +222,58 @@ class _NotificationScreenState extends State<NotificationScreen> with SingleTick
 class TimerPainter extends CustomPainter {
   final double progress;
   final Color backgroundColor;
-  final Color color;
+  final Color progressColor;
+  final Color glowColor;
 
   TimerPainter({
     required this.progress,
     required this.backgroundColor,
-    required this.color,
+    required this.progressColor,
+    required this.glowColor,
   });
 
   @override
   void paint(Canvas canvas, Size size) {
-    final center = Offset(size.width / 2, size.height / 2);
-    final radius = size.width / 2 - 12;
-    final backgroundPaint = Paint()
+    final Paint backgroundPaint = Paint()
       ..color = backgroundColor
-      ..strokeWidth = 16
+      ..strokeWidth = 12
       ..style = PaintingStyle.stroke;
-    final progressPaint = Paint()
-      ..color = color
-      ..strokeWidth = 16
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round;
 
-    canvas.drawCircle(center, radius, backgroundPaint);
-    final sweepAngle = 2 * 3.141592653589793 * progress;
+    final Paint progressPaint = Paint()
+      ..color = progressColor
+      ..strokeWidth = 14
+      ..style = PaintingStyle.stroke
+      ..maskFilter = MaskFilter.blur(BlurStyle.normal, 6);
+
+    final Paint glowPaint = Paint()
+      ..color = glowColor
+      ..strokeWidth = 28
+      ..style = PaintingStyle.stroke
+      ..maskFilter = MaskFilter.blur(BlurStyle.normal, 18);
+
+    final Offset center = Offset(size.width / 2, size.height / 2);
+    final double radius = size.width / 2;
+
+    // Glow
     canvas.drawArc(
       Rect.fromCircle(center: center, radius: radius),
-      -3.141592653589793 / 2,
-      sweepAngle,
+      -1.5,
+      2 * 3.14 * progress,
+      false,
+      glowPaint,
+    );
+    // Progress
+    canvas.drawArc(
+      Rect.fromCircle(center: center, radius: radius),
+      -1.5,
+      2 * 3.14 * progress,
       false,
       progressPaint,
     );
+    // Background
+    canvas.drawCircle(center, radius, backgroundPaint);
   }
 
   @override
-  bool shouldRepaint(TimerPainter oldDelegate) => oldDelegate.progress != progress;
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }
