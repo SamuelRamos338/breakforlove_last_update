@@ -64,6 +64,7 @@ Somos uma equipe de 9 pessoas apaixonadas por tecnologia e bem-estar digital.
 **Liderança:**
 - Back-end: Samuel Ramos 
 - Back-end: Maria Vitória
+  
 **Equipe**
   - Jailson
   - Gabriel
