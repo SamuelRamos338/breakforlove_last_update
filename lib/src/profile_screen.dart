@@ -91,10 +91,11 @@ class _ProfileScreenItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final iconColor = Theme.of(context).iconTheme.color;
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8),
       child: ListTile(
-        leading: Icon(icone, color: Colors.pink),
+        leading: Icon(icone, color: iconColor),
         title: Text(texto, style: const TextStyle(fontWeight: FontWeight.bold)),
         subtitle: Text(descricao),
         trailing: const Icon(Icons.arrow_forward),

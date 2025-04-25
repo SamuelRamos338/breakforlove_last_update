@@ -22,7 +22,7 @@ class BottomNavBar extends StatelessWidget {
           onTabChange: onTabChange,
           color: Colors.black,
           activeColor: Colors.black,
-          tabBackgroundColor: Colors.pink.shade100,
+          tabBackgroundColor: Theme.of(context).colorScheme.surface,
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16), // Aumentei o padding para maior área de toque
           gap: 8, // Espaçamento ligeiramente maior entre os ícones e textos
           duration: const Duration(milliseconds: 200),

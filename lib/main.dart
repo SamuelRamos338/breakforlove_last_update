@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:provider/provider.dart';
+import 'package:myapp/src/theme_notifier.dart';
 import 'package:myapp/src/home_screen.dart';
 import 'package:myapp/src/notification_screen.dart';
 import 'package:myapp/src/calendar_screen.dart';
@@ -10,7 +12,12 @@ import 'components/bottom_nav_bar.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('pt_BR', null);
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => ThemeNotifier(ThemeData.light()),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -18,15 +25,18 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData.light(),
-      darkTheme: ThemeData.dark(),
-      home: const LoginScreen(),
+    return Consumer<ThemeNotifier>(
+      builder: (context, theme, _) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: theme.themeData,
+          home: const LoginScreen(),
+        );
+      },
     );
   }
 }
-
+// O restante do MainPage permanece igual
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
 
