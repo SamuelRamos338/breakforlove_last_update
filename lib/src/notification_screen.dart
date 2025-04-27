@@ -116,7 +116,7 @@ class _NotificationScreenState extends State<NotificationScreen> with SingleTick
     final bgColor = theme.colorScheme.surface.withOpacity(0.95);
 
     return Scaffold(
-      backgroundColor: bgColor,
+      backgroundColor: Colors.white,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [

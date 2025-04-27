@@ -51,9 +51,9 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              primary.withOpacity(0.18),
-              secondary.withOpacity(0.18),
-              primary.withOpacity(0.10),
+              primary,
+              secondary,
+              primary,
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,

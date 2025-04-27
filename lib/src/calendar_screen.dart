@@ -147,7 +147,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
           const SizedBox(height: 20),
           Container(
             decoration: BoxDecoration(
-              color: theme.colorScheme.surface,
               borderRadius: BorderRadius.circular(18),
               boxShadow: [
                 BoxShadow(

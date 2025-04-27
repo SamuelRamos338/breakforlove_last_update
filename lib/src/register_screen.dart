@@ -52,9 +52,9 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              primary.withOpacity(0.18),
-              secondary.withOpacity(0.18),
-              primary.withOpacity(0.10),
+              primary,
+              secondary,
+              primary,
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,

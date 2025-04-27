@@ -11,462 +11,439 @@ class ThemeScreen extends StatefulWidget {
 
 class _ThemeScreenState extends State<ThemeScreen> {
   int _selected = 0;
-  bool _loading = false;
 
-  // Temas claros
-  final List<ThemeData> _lightThemes = [
+  // Temas Populares
+  final List<ThemeData> _popularThemes = [
+    // Romântico
     ThemeData(
       brightness: Brightness.light,
       primarySwatch: Colors.pink,
       scaffoldBackgroundColor: Colors.white,
       cardColor: const Color(0xFFFFE5E0),
-      appBarTheme: const AppBarTheme(
-        backgroundColor: Color(0xFFFADCD9),
-        foregroundColor: Colors.white,
-        elevation: 0,
-      ),
+      appBarTheme: const AppBarTheme(backgroundColor: Color(0xFFFADCD9)),
       iconTheme: const IconThemeData(color: Color(0xFFE5738A)),
       colorScheme: ColorScheme.light(
-        primary: Color(0xFFE5738A),
-        secondary: Color(0xFFF8BBD0),
-        surface: Color(0xFFFADCD9),
+        primary: const Color(0xFFE5738A),
+        secondary: const Color(0xFFF8BBD0),
+        surface: const Color(0xFFFADCD9),
       ),
       dividerColor: const Color(0xFFE8B9B2),
       bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFFE8B9B2)),
     ),
-    ThemeData(
-      brightness: Brightness.light,
-      primarySwatch: Colors.blue,
-      scaffoldBackgroundColor: Colors.white,
-      cardColor: const Color(0xFFE3F0FF),
-      appBarTheme: const AppBarTheme(
-        backgroundColor: Color(0xFFB3D1F7),
-        foregroundColor: Colors.white,
-        elevation: 0,
+    // Escuro
+    ThemeData.dark().copyWith(
+      scaffoldBackgroundColor: const Color(0xFF181A20),
+      cardColor: const Color(0xFF23242B),
+      appBarTheme: const AppBarTheme(backgroundColor: Color(0xFF23242B)),
+      iconTheme: const IconThemeData(color: Colors.white),
+      colorScheme: ColorScheme.dark(
+        primary: Colors.white,
+        secondary: Colors.grey,
+        surface: const Color(0xFF23242B),
       ),
-      iconTheme: const IconThemeData(color: Color(0xFF1976D2)),
-      colorScheme: ColorScheme.light(
-        primary: Color(0xFF1976D2),
-        secondary: Color(0xFF64B5F6),
-        surface: Color(0xFFB3D1F7),
-      ),
-      dividerColor: const Color(0xFFB3D1F7),
-      bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFFB3D1F7)),
+      dividerColor: Colors.grey.shade700,
+      bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFF23242B)),
     ),
+    // Claro
+    ThemeData.light().copyWith(
+      scaffoldBackgroundColor: Colors.white,
+      cardColor: const Color(0xFFF5F5F5),
+      appBarTheme: const AppBarTheme(backgroundColor: Colors.white),
+      iconTheme: const IconThemeData(color: Colors.blue),
+      colorScheme: ColorScheme.light(
+        primary: Colors.blue,
+        secondary: Colors.blueAccent,
+        surface: const Color(0xFFF5F5F5),
+      ),
+      dividerColor: Colors.blue,
+      bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFFF5F5F5)),
+    ),
+    // Verde
     ThemeData(
       brightness: Brightness.light,
       primarySwatch: Colors.green,
-      scaffoldBackgroundColor: Colors.white,
-      cardColor: const Color(0xFFE0F7E9),
-      appBarTheme: const AppBarTheme(
-        backgroundColor: Color(0xFFC8E6C9),
-        foregroundColor: Colors.white,
-        elevation: 0,
-      ),
-      iconTheme: const IconThemeData(color: Color(0xFF388E3C)),
+      scaffoldBackgroundColor: const Color(0xFFE8F5E9),
+      cardColor: const Color(0xFFC8E6C9),
+      appBarTheme: const AppBarTheme(backgroundColor: Color(0xFFC8E6C9)),
+      iconTheme: const IconThemeData(color: Colors.green),
       colorScheme: ColorScheme.light(
-        primary: Color(0xFF388E3C),
-        secondary: Color(0xFFA5D6A7),
-        surface: Color(0xFFC8E6C9),
+        primary: Colors.green,
+        secondary: Colors.greenAccent,
+        surface: const Color(0xFFC8E6C9),
       ),
-      dividerColor: const Color(0xFFA5D6A7),
-      bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFFA5D6A7)),
+      dividerColor: Colors.green,
+      bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFFC8E6C9)),
     ),
+  ];
+  final List<String> _popularNames = [
+    'Romântico',
+    'Escuro',
+    'Claro',
+    'Verde',
+  ];
+
+  // Temas Vivos
+  final List<ThemeData> _vividThemes = [
+    // Laranja
     ThemeData(
       brightness: Brightness.light,
       primarySwatch: Colors.orange,
-      scaffoldBackgroundColor: Colors.white,
-      cardColor: const Color(0xFFFFF3E0),
-      appBarTheme: const AppBarTheme(
-        backgroundColor: Color(0xFFFFE0B2),
-        foregroundColor: Colors.white,
-        elevation: 0,
-      ),
-      iconTheme: const IconThemeData(color: Color(0xFFF57C00)),
+      scaffoldBackgroundColor: const Color(0xFFFFF3E0),
+      cardColor: const Color(0xFFFFE0B2),
+      appBarTheme: const AppBarTheme(backgroundColor: Color(0xFFFFE0B2)),
+      iconTheme: const IconThemeData(color: Colors.orange),
       colorScheme: ColorScheme.light(
-        primary: Color(0xFFF57C00),
-        secondary: Color(0xFFFFB74D),
-        surface: Color(0xFFFFE0B2),
+        primary: Colors.orange,
+        secondary: Colors.deepOrangeAccent,
+        surface: const Color(0xFFFFE0B2),
       ),
-      dividerColor: const Color(0xFFFFCC80),
-      bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFFFFCC80)),
+      dividerColor: Colors.orange,
+      bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFFFFE0B2)),
     ),
+    // Roxo
     ThemeData(
       brightness: Brightness.light,
       primarySwatch: Colors.purple,
-      scaffoldBackgroundColor: Colors.white,
-      cardColor: const Color(0xFFF3E5F5),
-      appBarTheme: const AppBarTheme(
-        backgroundColor: Color(0xFFE1BEE7),
-        foregroundColor: Colors.white,
-        elevation: 0,
-      ),
-      iconTheme: const IconThemeData(color: Color(0xFF8E24AA)),
+      scaffoldBackgroundColor: const Color(0xFFF3E5F5),
+      cardColor: const Color(0xFFE1BEE7),
+      appBarTheme: const AppBarTheme(backgroundColor: Color(0xFFE1BEE7)),
+      iconTheme: const IconThemeData(color: Colors.purple),
       colorScheme: ColorScheme.light(
-        primary: Color(0xFF8E24AA),
-        secondary: Color(0xFFCE93D8),
-        surface: Color(0xFFE1BEE7),
+        primary: Colors.purple,
+        secondary: Colors.purpleAccent,
+        surface: const Color(0xFFE1BEE7),
       ),
-      dividerColor: const Color(0xFFCE93D8),
-      bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFFCE93D8)),
+      dividerColor: Colors.purple,
+      bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFFE1BEE7)),
     ),
+    // Turquesa
     ThemeData(
       brightness: Brightness.light,
       primarySwatch: Colors.teal,
-      scaffoldBackgroundColor: Colors.white,
-      cardColor: const Color(0xFFE0F2F1),
-      appBarTheme: const AppBarTheme(
-        backgroundColor: Color(0xFFB2DFDB),
-        foregroundColor: Colors.white,
-        elevation: 0,
-      ),
-      iconTheme: const IconThemeData(color: Color(0xFF00897B)),
+      scaffoldBackgroundColor: const Color(0xFFE0F2F1),
+      cardColor: const Color(0xFFB2DFDB),
+      appBarTheme: const AppBarTheme(backgroundColor: Color(0xFFB2DFDB)),
+      iconTheme: const IconThemeData(color: Colors.teal),
       colorScheme: ColorScheme.light(
-        primary: Color(0xFF00897B),
-        secondary: Color(0xFF80CBC4),
-        surface: Color(0xFFB2DFDB),
+        primary: Colors.teal,
+        secondary: Colors.tealAccent,
+        surface: const Color(0xFFB2DFDB),
       ),
-      dividerColor: const Color(0xFF80CBC4),
-      bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFF80CBC4)),
+      dividerColor: Colors.teal,
+      bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFFB2DFDB)),
     ),
+    // Vermelho
     ThemeData(
       brightness: Brightness.light,
-      primarySwatch: Colors.amber,
-      scaffoldBackgroundColor: Colors.white,
-      cardColor: const Color(0xFFFFF8E1),
-      appBarTheme: const AppBarTheme(
-        backgroundColor: Color(0xFFFFECB3),
-        foregroundColor: Colors.white,
-        elevation: 0,
-      ),
-      iconTheme: const IconThemeData(color: Color(0xFFFFA000)),
+      primarySwatch: Colors.red,
+      scaffoldBackgroundColor: const Color(0xFFFFEBEE),
+      cardColor: const Color(0xFFFFCDD2),
+      appBarTheme: const AppBarTheme(backgroundColor: Color(0xFFFFCDD2)),
+      iconTheme: const IconThemeData(color: Colors.red),
       colorScheme: ColorScheme.light(
-        primary: Color(0xFFFFA000),
-        secondary: Color(0xFFFFD54F),
-        surface: Color(0xFFFFECB3),
+        primary: Colors.red,
+        secondary: Colors.redAccent,
+        surface: const Color(0xFFFFCDD2),
       ),
-      dividerColor: const Color(0xFFFFD54F),
-      bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFFFFD54F)),
+      dividerColor: Colors.red,
+      bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFFFFCDD2)),
     ),
-    ThemeData(
-      brightness: Brightness.light,
-      primarySwatch: Colors.cyan,
-      scaffoldBackgroundColor: Colors.white,
-      cardColor: const Color(0xFFE0F7FA),
-      appBarTheme: const AppBarTheme(
-        backgroundColor: Color(0xFFB2EBF2),
-        foregroundColor: Colors.white,
-        elevation: 0,
-      ),
-      iconTheme: const IconThemeData(color: Color(0xFF00ACC1)),
-      colorScheme: ColorScheme.light(
-        primary: Color(0xFF00ACC1),
-        secondary: Color(0xFF4DD0E1),
-        surface: Color(0xFFB2EBF2),
-      ),
-      dividerColor: const Color(0xFF4DD0E1),
-      bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFF4DD0E1)),
-    ),
-    ThemeData(
-      brightness: Brightness.light,
-      primarySwatch: Colors.lime,
-      scaffoldBackgroundColor: Colors.white,
-      cardColor: const Color(0xFFF9FBE7),
-      appBarTheme: const AppBarTheme(
-        backgroundColor: Color(0xFFF0F4C3),
-        foregroundColor: Colors.white,
-        elevation: 0,
-      ),
-      iconTheme: const IconThemeData(color: Color(0xFFAFB42B)),
-      colorScheme: ColorScheme.light(
-        primary: Color(0xFFAFB42B),
-        secondary: Color(0xFFD4E157),
-        surface: Color(0xFFF0F4C3),
-      ),
-      dividerColor: const Color(0xFFD4E157),
-      bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFFD4E157)),
-    ),
+    // Índigo
     ThemeData(
       brightness: Brightness.light,
       primarySwatch: Colors.indigo,
-      scaffoldBackgroundColor: Colors.white,
-      cardColor: const Color(0xFFE8EAF6),
-      appBarTheme: const AppBarTheme(
-        backgroundColor: Color(0xFFC5CAE9),
-        foregroundColor: Colors.white,
-        elevation: 0,
-      ),
-      iconTheme: const IconThemeData(color: Color(0xFF3949AB)),
+      scaffoldBackgroundColor: const Color(0xFFE8EAF6),
+      cardColor: const Color(0xFFC5CAE9),
+      appBarTheme: const AppBarTheme(backgroundColor: Color(0xFFC5CAE9)),
+      iconTheme: const IconThemeData(color: Colors.indigo),
       colorScheme: ColorScheme.light(
-        primary: Color(0xFF3949AB),
-        secondary: Color(0xFF7986CB),
-        surface: Color(0xFFC5CAE9),
+        primary: Colors.indigo,
+        secondary: Colors.indigoAccent,
+        surface: const Color(0xFFC5CAE9),
       ),
-      dividerColor: const Color(0xFF7986CB),
-      bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFF7986CB)),
+      dividerColor: Colors.indigo,
+      bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFFC5CAE9)),
+    ),
+    // Marinho
+    ThemeData(
+      brightness: Brightness.light,
+      scaffoldBackgroundColor: const Color(0xFFE3F2FD),
+      cardColor: const Color(0xFF90CAF9),
+      appBarTheme: const AppBarTheme(backgroundColor: Color(0xFF90CAF9)),
+      iconTheme: const IconThemeData(color: Color(0xFF1565C0)),
+      colorScheme: ColorScheme.light(
+        primary: const Color(0xFF1565C0),
+        secondary: Colors.blueAccent,
+        surface: const Color(0xFF90CAF9),
+      ),
+      dividerColor: const Color(0xFF1565C0),
+      bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFF90CAF9)),
+    ),
+    // Rosa Choque
+    ThemeData(
+      brightness: Brightness.light,
+      scaffoldBackgroundColor: const Color(0xFFFFF0F6),
+      cardColor: const Color(0xFFFF80AB),
+      appBarTheme: const AppBarTheme(backgroundColor: Color(0xFFFF80AB)),
+      iconTheme: const IconThemeData(color: Color(0xFFD5006A)),
+      colorScheme: ColorScheme.light(
+        primary: const Color(0xFFD5006A),
+        secondary: Colors.pinkAccent,
+        surface: const Color(0xFFFF80AB),
+      ),
+      dividerColor: const Color(0xFFD5006A),
+      bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFFFF80AB)),
+    ),
+    // Verde Floresta
+    ThemeData(
+      brightness: Brightness.light,
+      scaffoldBackgroundColor: const Color(0xFFE8F5E9),
+      cardColor: const Color(0xFF388E3C),
+      appBarTheme: const AppBarTheme(backgroundColor: Color(0xFF388E3C)),
+      iconTheme: const IconThemeData(color: Color(0xFF1B5E20)),
+      colorScheme: ColorScheme.light(
+        primary: const Color(0xFF1B5E20),
+        secondary: Colors.greenAccent,
+        surface: const Color(0xFF388E3C),
+      ),
+      dividerColor: const Color(0xFF1B5E20),
+      bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFF388E3C)),
     ),
   ];
-
-  // Temas escuros
-  final List<ThemeData> _darkThemes = [
-    ThemeData(
-      brightness: Brightness.dark,
-      scaffoldBackgroundColor: const Color(0xFF181829),
-      cardColor: const Color(0xFF23234A),
-      appBarTheme: const AppBarTheme(backgroundColor: Color(0xFF23234A)),
-      iconTheme: const IconThemeData(color: Color(0xFF00FFC6)),
-      colorScheme: ColorScheme.dark(
-        primary: Color(0xFF00FFC6),
-        secondary: Color(0xFF7C4DFF),
-        surface: Color(0xFF23234A),
-      ),
-      dividerColor: const Color(0xFF7C4DFF),
-      bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFF23234A)),
-    ),
-    ThemeData(
-      brightness: Brightness.dark,
-      scaffoldBackgroundColor: const Color(0xFF101F33),
-      cardColor: const Color(0xFF1A2947),
-      appBarTheme: const AppBarTheme(backgroundColor: Color(0xFF1A2947)),
-      iconTheme: const IconThemeData(color: Color(0xFFFF4081)),
-      colorScheme: ColorScheme.dark(
-        primary: Color(0xFFFF4081),
-        secondary: Color(0xFF00B8D4),
-        surface: Color(0xFF1A2947),
-      ),
-      dividerColor: const Color(0xFFFF4081),
-      bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFF1A2947)),
-    ),
-    ThemeData(
-      brightness: Brightness.dark,
-      scaffoldBackgroundColor: const Color(0xFF16241D),
-      cardColor: const Color(0xFF1E3A2F),
-      appBarTheme: const AppBarTheme(backgroundColor: Color(0xFF1E3A2F)),
-      iconTheme: const IconThemeData(color: Color(0xFFFFA726)),
-      colorScheme: ColorScheme.dark(
-        primary: Color(0xFFFFA726),
-        secondary: Color(0xFF43A047),
-        surface: Color(0xFF1E3A2F),
-      ),
-      dividerColor: const Color(0xFFFFA726),
-      bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFF1E3A2F)),
-    ),
-    ThemeData(
-      brightness: Brightness.dark,
-      scaffoldBackgroundColor: const Color(0xFF23272F),
-      cardColor: const Color(0xFF313543),
-      appBarTheme: const AppBarTheme(backgroundColor: Color(0xFF313543)),
-      iconTheme: const IconThemeData(color: Color(0xFF00B8D4)),
-      colorScheme: ColorScheme.dark(
-        primary: Color(0xFF00B8D4),
-        secondary: Color(0xFF00FFC6),
-        surface: Color(0xFF313543),
-      ),
-      dividerColor: const Color(0xFF00B8D4),
-      bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFF313543)),
-    ),
-    ThemeData(
-      brightness: Brightness.dark,
-      scaffoldBackgroundColor: const Color(0xFF2A183A),
-      cardColor: const Color(0xFF3B2352),
-      appBarTheme: const AppBarTheme(backgroundColor: Color(0xFF3B2352)),
-      iconTheme: const IconThemeData(color: Color(0xFFD4E157)),
-      colorScheme: ColorScheme.dark(
-        primary: Color(0xFFD4E157),
-        secondary: Color(0xFF7C4DFF),
-        surface: Color(0xFF3B2352),
-      ),
-      dividerColor: const Color(0xFFD4E157),
-      bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFF3B2352)),
-    ),
-    ThemeData(
-      brightness: Brightness.dark,
-      scaffoldBackgroundColor: const Color(0xFF2E2119),
-      cardColor: const Color(0xFF4E342E),
-      appBarTheme: const AppBarTheme(backgroundColor: Color(0xFF4E342E)),
-      iconTheme: const IconThemeData(color: Color(0xFF80CBC4)),
-      colorScheme: ColorScheme.dark(
-        primary: Color(0xFF80CBC4),
-        secondary: Color(0xFFFFA726),
-        surface: Color(0xFF4E342E),
-      ),
-      dividerColor: const Color(0xFF80CBC4),
-      bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFF4E342E)),
-    ),
-    ThemeData(
-      brightness: Brightness.dark,
-      scaffoldBackgroundColor: const Color(0xFF181818),
-      cardColor: const Color(0xFF232323),
-      appBarTheme: const AppBarTheme(backgroundColor: Color(0xFF232323)),
-      iconTheme: const IconThemeData(color: Color(0xFFFF9800)),
-      colorScheme: ColorScheme.dark(
-        primary: Color(0xFFFF9800),
-        secondary: Color(0xFFD32F2F),
-        surface: Color(0xFF232323),
-      ),
-      dividerColor: const Color(0xFFFF9800),
-      bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFF232323)),
-    ),
-    ThemeData(
-      brightness: Brightness.dark,
-      scaffoldBackgroundColor: const Color(0xFF263238),
-      cardColor: const Color(0xFF37474F),
-      appBarTheme: const AppBarTheme(backgroundColor: Color(0xFF37474F)),
-      iconTheme: const IconThemeData(color: Color(0xFFD32F2F)),
-      colorScheme: ColorScheme.dark(
-        primary: Color(0xFFD32F2F),
-        secondary: Color(0xFF00B8D4),
-        surface: Color(0xFF37474F),
-      ),
-      dividerColor: const Color(0xFFD32F2F),
-      bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFF37474F)),
-    ),
-    ThemeData(
-      brightness: Brightness.dark,
-      scaffoldBackgroundColor: const Color(0xFF22232B),
-      cardColor: const Color(0xFF35354A),
-      appBarTheme: const AppBarTheme(backgroundColor: Color(0xFF35354A)),
-      iconTheme: const IconThemeData(color: Color(0xFFFF2D8A)),
-      colorScheme: ColorScheme.dark(
-        primary: Color(0xFFFF2D8A),
-        secondary: Color(0xFF7C4DFF),
-        surface: Color(0xFF35354A),
-      ),
-      dividerColor: const Color(0xFFFF2D8A),
-      bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFF35354A)),
-    ),
-  ];
-
-  // Nomes dos temas (claro + escuro)
-  final List<String> _names = [
-    'Romântico',
-    'Azul',
-    'Verde',
+  final List<String> _vividNames = [
     'Laranja',
     'Roxo',
     'Turquesa',
-    'Amarelo',
+    'Vermelho',
+    'Índigo',
+    'Marinho',
+    'Rosa Choque',
+    'Verde Floresta',
+  ];
+
+  // Temas Minimalistas
+  final List<ThemeData> _minimalThemes = [
+    // Marrom
+    ThemeData(
+      brightness: Brightness.light,
+      primarySwatch: Colors.brown,
+      scaffoldBackgroundColor: const Color(0xFFD7CCC8),
+      cardColor: const Color(0xFFBCAAA4),
+      appBarTheme: const AppBarTheme(backgroundColor: Color(0xFFBCAAA4)),
+      iconTheme: const IconThemeData(color: Colors.brown),
+      colorScheme: ColorScheme.light(
+        primary: Colors.brown,
+        secondary: Colors.brown,
+        surface: const Color(0xFFBCAAA4),
+      ),
+      dividerColor: Colors.brown,
+      bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFFBCAAA4)),
+    ),
+    // Ciano
+    ThemeData(
+      brightness: Brightness.light,
+      primarySwatch: Colors.cyan,
+      scaffoldBackgroundColor: const Color(0xFFE0F7FA),
+      cardColor: const Color(0xFFB2EBF2),
+      appBarTheme: const AppBarTheme(backgroundColor: Color(0xFFB2EBF2)),
+      iconTheme: const IconThemeData(color: Colors.cyan),
+      colorScheme: ColorScheme.light(
+        primary: Colors.cyan,
+        secondary: Colors.cyanAccent,
+        surface: const Color(0xFFB2EBF2),
+      ),
+      dividerColor: Colors.cyan,
+      bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFFB2EBF2)),
+    ),
+    // Lima
+    ThemeData(
+      brightness: Brightness.light,
+      primarySwatch: Colors.lime,
+      scaffoldBackgroundColor: const Color(0xFFF9FBE7),
+      cardColor: const Color(0xFFF0F4C3),
+      appBarTheme: const AppBarTheme(backgroundColor: Color(0xFFF0F4C3)),
+      iconTheme: const IconThemeData(color: Colors.lime),
+      colorScheme: ColorScheme.light(
+        primary: Colors.lime,
+        secondary: Colors.limeAccent,
+        surface: const Color(0xFFF0F4C3),
+      ),
+      dividerColor: Colors.lime,
+      bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFFF0F4C3)),
+    ),
+    // Daltônico
+    ThemeData(
+      brightness: Brightness.light,
+      scaffoldBackgroundColor: Colors.white,
+      cardColor: const Color(0xFFF7F7F7),
+      appBarTheme: const AppBarTheme(backgroundColor: Color(0xFFF7F7F7)),
+      iconTheme: const IconThemeData(color: Color(0xFF0072B2)),
+      colorScheme: ColorScheme.light(
+        primary: const Color(0xFF0072B2),
+        secondary: const Color(0xFF009E73),
+        surface: const Color(0xFFF7F7F7),
+      ),
+      dividerColor: const Color(0xFF009E73),
+      bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFFF7F7F7)),
+      textTheme: const TextTheme(
+        bodyMedium: TextStyle(fontSize: 16, color: Colors.black),
+      ),
+    ),
+    // Amanhecer
+    ThemeData(
+      brightness: Brightness.light,
+      scaffoldBackgroundColor: const Color(0xFFFFF8E1),
+      cardColor: const Color(0xFFFFECB3),
+      appBarTheme: const AppBarTheme(backgroundColor: Color(0xFFFFECB3)),
+      iconTheme: const IconThemeData(color: Color(0xFFFFB300)),
+      colorScheme: ColorScheme.light(
+        primary: const Color(0xFFFFB300),
+        secondary: const Color(0xFFFFF176),
+        surface: const Color(0xFFFFECB3),
+      ),
+      dividerColor: const Color(0xFFFFB300),
+      bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFFFFECB3)),
+    ),
+    // Café
+    ThemeData(
+      brightness: Brightness.light,
+      scaffoldBackgroundColor: const Color(0xFFD7CCC8),
+      cardColor: const Color(0xFF8D6E63),
+      appBarTheme: const AppBarTheme(backgroundColor: Color(0xFF8D6E63)),
+      iconTheme: const IconThemeData(color: Color(0xFF4E342E)),
+      colorScheme: ColorScheme.light(
+        primary: const Color(0xFF4E342E),
+        secondary: const Color(0xFFA1887F),
+        surface: const Color(0xFF8D6E63),
+      ),
+      dividerColor: const Color(0xFF4E342E),
+      bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFF8D6E63)),
+    ),
+  ];
+  final List<String> _minimalNames = [
+    'Marrom',
     'Ciano',
     'Lima',
-    'Índigo',
-    'Neon Escuro',
-    'Meia-noite & Pink',
-    'Floresta & Laranja',
-    'Space & Cyan',
-    'Roxo & Lima',
-    'Marrom & Menta',
-    'Preto & Laranja',
-    'Azul Escuro & Vermelho',
-    'Grafite & Magenta',
+    'Daltônico',
+    'Amanhecer',
+    'Café',
   ];
 
-  // Lista geral (claro + escuro)
-  late final List<ThemeData> _themes = [
-    ..._lightThemes,
-    ..._darkThemes,
+  // Unifica para seleção global
+  List<ThemeData> get _allThemes => [
+    ..._popularThemes,
+    ..._vividThemes,
+    ..._minimalThemes,
   ];
-
-  Future<void> _onThemeTap(int i) async {
-    setState(() => _loading = true);
-    await Future.delayed(const Duration(milliseconds: 600));
-    setState(() {
-      _selected = i;
-      _loading = false;
-    });
-    Provider.of<ThemeNotifier>(context, listen: false).setTheme(_themes[i]);
-  }
+  List<String> get _allNames => [
+    ..._popularNames,
+    ..._vividNames,
+    ..._minimalNames,
+  ];
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final currentTheme = Theme.of(context);
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Temas do App'),
-          centerTitle: true,
-          elevation: 0,
-          backgroundColor: theme.appBarTheme.backgroundColor,
-        ),
-        body: _loading
-            ? const Center(child: CircularProgressIndicator())
-            : ListView.separated(
+      appBar: AppBar(
+        title: const Text('Temas do App'),
+        backgroundColor: currentTheme.appBarTheme.backgroundColor,
+        elevation: 0,
+      ),
+      body: ListView.builder(
         padding: const EdgeInsets.all(20),
-    itemCount: _themes.length,
-    separatorBuilder: (_, __) => const SizedBox(height: 16),
-    itemBuilder: (context, i) {
-    final t = _themes[i];
-    return GestureDetector(
-    onTap: () => _onThemeTap(i),
-    child: AnimatedContainer(
-    duration: const Duration(milliseconds: 250),
-    curve: Curves.easeOutCubic,
-    decoration: BoxDecoration(
-    color: t.cardColor,
-    borderRadius: BorderRadius.circular(18),
-    border: Border.all(
-    color: _selected == i
-    ? theme.colorScheme.primary
-        : Colors.transparent,
-    width: 2.5,
-    ),
-      // dart
-      boxShadow: [
-        BoxShadow(
-          color: t.cardColor.withOpacity(0.13),
-          blurRadius: 8,
-          offset: const Offset(0, 2),
-        ),
-      ],
-    ),
+        itemCount: _allThemes.length,
+        itemBuilder: (context, i) {
+          return _ThemeCard(
+            theme: _allThemes[i],
+            name: _allNames[i],
+            selected: i == _selected,
+            onTap: () {
+              setState(() => _selected = i);
+              Provider.of<ThemeNotifier>(context, listen: false)
+                  .setTheme(_allThemes[i]);
+            },
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _ThemeCard extends StatelessWidget {
+  final ThemeData theme;
+  final String name;
+  final bool selected;
+  final VoidCallback onTap;
+
+  const _ThemeCard({
+    required this.theme,
+    required this.name,
+    required this.selected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final primary = theme.colorScheme.primary;
+    final secondary = theme.colorScheme.secondary;
+    return Card(
+      elevation: selected ? 8 : 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(18),
+        side: selected
+            ? BorderSide(color: primary, width: 2)
+            : BorderSide(color: Colors.grey.shade300, width: 1),
+      ),
+      margin: const EdgeInsets.symmetric(vertical: 8),
       child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-        leading: _ColorDots(theme: t),
+        leading: _ColorDots(primary: primary, secondary: secondary),
         title: Text(
-          _names[i],
+          name,
           style: TextStyle(
-            color: t.iconTheme.color,
             fontWeight: FontWeight.bold,
-            fontSize: 18,
+            color: selected ? primary : Colors.black,
           ),
         ),
-        trailing: _selected == i
-            ? Icon(Icons.check_circle, color: theme.colorScheme.primary)
+        trailing: selected
+            ? Icon(Icons.check_circle, color: primary)
             : null,
+        onTap: onTap,
       ),
-    ),
-    );
-    },
-        ),
     );
   }
 }
 
 class _ColorDots extends StatelessWidget {
-  final ThemeData theme;
-  const _ColorDots({required this.theme});
+  final Color primary;
+  final Color secondary;
+  const _ColorDots({required this.primary, required this.secondary});
 
   @override
   Widget build(BuildContext context) {
-    final colors = [
-      theme.colorScheme.primary,
-      theme.colorScheme.secondary,
-      theme.cardColor,
-      theme.scaffoldBackgroundColor,
-    ];
     return Row(
       mainAxisSize: MainAxisSize.min,
-      children: colors
-          .map((c) => Container(
-        width: 18,
-        height: 18,
-        margin: const EdgeInsets.symmetric(horizontal: 2),
-        decoration: BoxDecoration(
-          color: c,
-          shape: BoxShape.circle,
-          border: Border.all(color: Colors.white, width: 2),
+      children: [
+        Container(
+          width: 28,
+          height: 28,
+          decoration: BoxDecoration(
+            color: primary,
+            shape: BoxShape.circle,
+            border: Border.all(color: Colors.grey.shade400, width: 2),
+          ),
         ),
-      ))
-          .toList(),
+        const SizedBox(width: 8),
+        Container(
+          width: 28,
+          height: 28,
+          decoration: BoxDecoration(
+            color: secondary,
+            shape: BoxShape.circle,
+            border: Border.all(color: Colors.grey.shade400, width: 2),
+          ),
+        ),
+      ],
     );
   }
 }
-
