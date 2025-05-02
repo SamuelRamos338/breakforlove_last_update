@@ -75,4 +75,5 @@ Somos uma equipe de 9 pessoas apaixonadas por tecnologia e bem-estar digital.
   - Fábio
   - Joan
   - Juan
+  - Ian
 
