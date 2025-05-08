@@ -9,8 +9,7 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProviderStateMixin {
-  final _nameController = TextEditingController();
-  final _emailController = TextEditingController();
+  final _userController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   bool _visible = false;
@@ -102,8 +101,7 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
                       offset: _visible ? Offset(0, 0) : Offset(0, 0.15),
                       curve: Curves.easeOutCubic,
                       child: _RegisterScreenForm(
-                        nameController: _nameController,
-                        emailController: _emailController,
+                        userController: _userController,
                         passwordController: _passwordController,
                         confirmPasswordController: _confirmPasswordController,
                         onLoginTap: () {
@@ -123,15 +121,13 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
 }
 
 class _RegisterScreenForm extends StatefulWidget {
-  final TextEditingController nameController;
-  final TextEditingController emailController;
+  final TextEditingController userController;
   final TextEditingController passwordController;
   final TextEditingController confirmPasswordController;
   final VoidCallback onLoginTap;
 
   const _RegisterScreenForm({
-    required this.nameController,
-    required this.emailController,
+    required this.userController,
     required this.passwordController,
     required this.confirmPasswordController,
     required this.onLoginTap,
@@ -158,21 +154,10 @@ class _RegisterScreenFormState extends State<_RegisterScreenForm> {
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
-              controller: widget.nameController,
+              controller: widget.userController,
               decoration: InputDecoration(
-                labelText: 'Nome',
+                labelText: 'Criar usuário',
                 prefixIcon: Icon(Icons.person, color: iconColor),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-              ),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: widget.emailController,
-              decoration: InputDecoration(
-                labelText: 'E-mail',
-                prefixIcon: Icon(Icons.email, color: iconColor),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),

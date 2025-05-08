@@ -10,7 +10,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStateMixin {
-  final _emailController = TextEditingController();
+  final _userController = TextEditingController();
   final _passwordController = TextEditingController();
   late final AnimationController _logoAnimController;
   late final Animation<double> _logoScale;
@@ -101,7 +101,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                       offset: _showForm ? Offset(0, 0) : Offset(0, 0.15),
                       curve: Curves.easeOutCubic,
                       child: _LoginScreenForm(
-                        emailController: _emailController,
+                        userController: _userController,
                         passwordController: _passwordController,
                         onRegisterTap: () {
                           Navigator.push(
@@ -123,12 +123,12 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
 }
 
 class _LoginScreenForm extends StatelessWidget {
-  final TextEditingController emailController;
+  final TextEditingController userController;
   final TextEditingController passwordController;
   final VoidCallback onRegisterTap;
 
   const _LoginScreenForm({
-    required this.emailController,
+    required this.userController,
     required this.passwordController,
     required this.onRegisterTap,
   });
@@ -136,6 +136,7 @@ class _LoginScreenForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final primaryColor = Theme.of(context).colorScheme.primary;
+    final iconColor = Theme.of(context).iconTheme.color;
     return Column(
       children: [
         Card(
@@ -148,10 +149,10 @@ class _LoginScreenForm extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 TextField(
-                  controller: emailController,
+                  controller: userController,
                   decoration: InputDecoration(
-                    labelText: 'E-mail',
-                    prefixIcon: Icon(Icons.email),
+                    labelText: 'Usuário',
+                    prefixIcon: Icon(Icons.person , color: iconColor),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),
@@ -163,7 +164,7 @@ class _LoginScreenForm extends StatelessWidget {
                   obscureText: true,
                   decoration: InputDecoration(
                     labelText: 'Senha',
-                    prefixIcon: Icon(Icons.lock),
+                    prefixIcon: Icon(Icons.lock , color: iconColor),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),
@@ -194,17 +195,17 @@ class _LoginScreenForm extends StatelessWidget {
                     ),
                   ],
                 ),
+                TextButton(
+                  onPressed: onRegisterTap,
+                  child: const Text(
+                    'Não tem conta? Cadastre-se',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.blueAccent,
+                    ),
+                  ),
+                ),
               ],
-            ),
-          ),
-        ),
-        TextButton(
-          onPressed: onRegisterTap,
-          child: const Text(
-            'Não tem conta? Cadastre-se',
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.blueAccent,
             ),
           ),
         ),

@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="breakforlove_last_update"
+        android:label="Break For Love"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
