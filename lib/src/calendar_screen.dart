@@ -69,11 +69,11 @@ class _CalendarScreenState extends State<CalendarScreen> {
     });
   }
 
-  Widget _buildReminderCard(String key, String reminder) {
+  Widget _buildReminderCard(String key, String reminder, ThemeData theme) {
     final date = DateTime.parse("$key 00:00:00");
     final dayString = date.day.toString();
     return Card(
-      elevation: 4,
+      elevation: 3,
       margin: const EdgeInsets.symmetric(vertical: 6),
       child: Padding(
         padding: const EdgeInsets.all(12),
@@ -82,7 +82,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.pinkAccent.withOpacity(0.2),
+                color: theme.colorScheme.surface,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
@@ -90,16 +90,16 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Colors.pinkAccent,
+                  color: Colors.black,
                 ),
               ),
             ),
             const SizedBox(width: 16),
             Expanded(
-              child: Text(reminder, style: const TextStyle(fontSize: 16)),
+              child: Text(reminder, style: const TextStyle(fontSize: 16, color: Colors.black)),
             ),
             IconButton(
-              icon: const Icon(Icons.edit, color: Colors.grey),
+              icon: const Icon(Icons.edit, color: Colors.black),
               tooltip: "Editar Lembrete",
               onPressed: () {
                 setState(() {
@@ -126,6 +126,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final sortedReminders = _reminders.entries.toList()
       ..sort((a, b) => DateTime.parse(a.key).compareTo(DateTime.parse(b.key)));
 
@@ -136,79 +137,126 @@ class _CalendarScreenState extends State<CalendarScreen> {
         children: [
           const Text(
             "Escolha um dia para adicionar lembretes",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
             textAlign: TextAlign.center,
           ),
           Divider(
-            color: Colors.pink.shade100,// Cor da linha
-            thickness: 2,       // Espessura da linha
+            color: theme.colorScheme.surface,
+            thickness: 2,
           ),
           const SizedBox(height: 20),
-          TableCalendar(
-            locale: "pt_BR",
-            rowHeight: 50,
-            headerStyle: const HeaderStyle(
-              formatButtonVisible: false,
-              titleCentered: true,
-              titleTextStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              leftChevronIcon: Icon(Icons.chevron_left),
-              rightChevronIcon: Icon(Icons.chevron_right),
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(18),
+              boxShadow: [
+                BoxShadow(
+                  color: theme.colorScheme.surface.withOpacity(0.2),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
-            calendarStyle: CalendarStyle(
-              todayDecoration: BoxDecoration(
-                color: Colors.pinkAccent.withOpacity(0.3),
-                shape: BoxShape.circle,
+            child: TableCalendar(
+              locale: "pt_BR",
+              rowHeight: 50,
+              headerStyle: HeaderStyle(
+                formatButtonVisible: false,
+                titleCentered: true,
+                titleTextStyle: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: theme.colorScheme.primary,
+                ),
+                leftChevronIcon: Icon(Icons.chevron_left, color: theme.colorScheme.primary),
+                rightChevronIcon: Icon(Icons.chevron_right, color: theme.colorScheme.primary),
               ),
-              selectedDecoration: BoxDecoration(
-                color: Colors.pinkAccent.withOpacity(0.5),
-                shape: BoxShape.circle,
+              calendarStyle: CalendarStyle(
+                todayDecoration: BoxDecoration(
+                  color: theme.colorScheme.primary,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: theme.colorScheme.primary.withOpacity(0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                selectedDecoration: BoxDecoration(
+                  color: theme.colorScheme.secondary,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: theme.colorScheme.secondary.withOpacity(0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                defaultTextStyle: const TextStyle(color: Colors.black),
+                weekendTextStyle: const TextStyle(color: Colors.black),
               ),
-            ),
-            selectedDayPredicate: (day) => isSameDay(_selectedDate, day),
-            focusedDay: _selectedDate ?? DateTime.now(),
-            firstDay: DateTime.utc(1990, 1, 1),
-            lastDay: DateTime.utc(2040, 1, 1),
-            onDaySelected: _onDaySelected,
-            calendarBuilders: CalendarBuilders(
-              defaultBuilder: (context, day, focusedDay) {
-                final key = _dateKey(day);
-                if (_reminders.containsKey(key)) {
-                  return Container(
-                    margin: const EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                      color: Colors.pinkAccent.withOpacity(0.5),
-                      shape: BoxShape.circle,
-                    ),
-                    alignment: Alignment.center,
-                    child: Text(
-                      '${day.day}',
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                  );
-                }
-                return null;
-              },
+              selectedDayPredicate: (day) => isSameDay(_selectedDate, day),
+              focusedDay: _selectedDate ?? DateTime.now(),
+              firstDay: DateTime.utc(1990, 1, 1),
+              lastDay: DateTime.utc(2040, 1, 1),
+              onDaySelected: _onDaySelected,
+              calendarBuilders: CalendarBuilders(
+                defaultBuilder: (context, day, focusedDay) {
+                  final key = _dateKey(day);
+                  if (_reminders.containsKey(key)) {
+                    return Container(
+                      margin: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.surface,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: theme.colorScheme.primary.withOpacity(0.2),
+                            blurRadius: 6,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      alignment: Alignment.center,
+                      child: Text(
+                        '${day.day}',
+                        style: const TextStyle(color: Colors.black),
+                      ),
+                    );
+                  }
+                  return null;
+                },
+              ),
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 30),
           Center(
             child: ElevatedButton.icon(
               onPressed: () {
                 if (_selectedDate == null) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: const Text("Selecione uma data primeiro!"),
+                    const SnackBar(
+                      content: Text("Selecione uma data primeiro!"),
                     ),
                   );
                 }
                 _showReminderDialog(isEditing: false);
               },
-              icon: const Icon(Icons.add, size: 30),
-              label: const Text("Adicionar Lembrete", style: TextStyle(fontSize: 16)),
+              icon: Icon(Icons.add_circle, color: theme.colorScheme.primary),
+              label: const Text(
+                "Adicionar Lembrete",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.pink.shade100,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                backgroundColor: theme.colorScheme.surface,
+                foregroundColor: Colors.black,
+                elevation: 2,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(24),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+                textStyle: const TextStyle(fontSize: 16),
               ),
             ),
           ),
@@ -216,7 +264,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
           if (_reminders.isNotEmpty) ...[
             const Text(
               "Lembretes",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
             ),
             const SizedBox(height: 10),
             Builder(
@@ -247,10 +295,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
                           padding: const EdgeInsets.symmetric(vertical: 8),
                           child: Text(
                             monthName[0].toUpperCase() + monthName.substring(1),
-                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
                           ),
                         ),
-                        ...groupList.map((entry) => _buildReminderCard(entry.key, entry.value)).toList(),
+                        ...groupList.map((entry) => _buildReminderCard(entry.key, entry.value, theme)).toList(),
                       ],
                     );
                   }).toList(),
