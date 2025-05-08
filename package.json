@@ -4,5 +4,19 @@
     "express": "^5.1.0",
     "mongodb": "^6.16.0",
     "mongoose": "^8.14.1"
-  }
+  },
+  "name": "breakforlove_last_update",
+  "version": "1.0.0",
+  "description": "Bem-vindo ao **BreakForLove**!  \r Um aplicativo criado para casais que desejam fortalecer o relacionamento, promovendo pausas conscientes no uso do celular e mais momentos de conexão real.",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }
