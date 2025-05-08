@@ -11,21 +11,17 @@ class ThemeScreen extends StatefulWidget {
 
 class _ThemeScreenState extends State<ThemeScreen> {
   int _selected = 0;
-  late final PageController _pageController = PageController(
-    initialPage: _selected,
-    viewportFraction: 0.48,
-  );
 
-  late final List<ThemeData> _allThemes = [
+  // Temas Populares
+  final List<ThemeData> _popularThemes = [
+    // Romântico
     ThemeData(
       brightness: Brightness.light,
       primarySwatch: Colors.pink,
       scaffoldBackgroundColor: Colors.white,
       cardColor: const Color(0xFFFFE5E0),
-      appBarTheme: const AppBarTheme(
-        backgroundColor: Color(0xFFFADCD9),
-      ),
-      iconTheme: const IconThemeData(color: Color(0xFFE5738A)), // Corrigido aqui
+      appBarTheme: const AppBarTheme(backgroundColor: Color(0xFFFADCD9)),
+      iconTheme: const IconThemeData(color: Color(0xFFE5738A)),
       colorScheme: ColorScheme.light(
         primary: const Color(0xFFE5738A),
         secondary: const Color(0xFFF8BBD0),
@@ -34,6 +30,21 @@ class _ThemeScreenState extends State<ThemeScreen> {
       dividerColor: const Color(0xFFE8B9B2),
       bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFFE8B9B2)),
     ),
+    // Escuro
+    ThemeData.dark().copyWith(
+      scaffoldBackgroundColor: const Color(0xFF181A20),
+      cardColor: const Color(0xFF23242B),
+      appBarTheme: const AppBarTheme(backgroundColor: Color(0xFF23242B)),
+      iconTheme: const IconThemeData(color: Colors.white),
+      colorScheme: ColorScheme.dark(
+        primary: Colors.white,
+        secondary: Colors.grey,
+        surface: const Color(0xFF23242B),
+      ),
+      dividerColor: Colors.grey.shade700,
+      bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFF23242B)),
+    ),
+    // Claro
     ThemeData.light().copyWith(
       scaffoldBackgroundColor: Colors.white,
       cardColor: const Color(0xFFF5F5F5),
@@ -45,8 +56,9 @@ class _ThemeScreenState extends State<ThemeScreen> {
         surface: const Color(0xFFF5F5F5),
       ),
       dividerColor: Colors.blue,
-      bottomAppBarTheme: BottomAppBarTheme(color: const Color(0xFFF5F5F5)),
+      bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFFF5F5F5)),
     ),
+    // Verde
     ThemeData(
       brightness: Brightness.light,
       primarySwatch: Colors.green,
@@ -60,8 +72,19 @@ class _ThemeScreenState extends State<ThemeScreen> {
         surface: const Color(0xFFC8E6C9),
       ),
       dividerColor: Colors.green,
-      bottomAppBarTheme: BottomAppBarTheme(color: const Color(0xFFC8E6C9)),
+      bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFFC8E6C9)),
     ),
+  ];
+  final List<String> _popularNames = [
+    'Romântico',
+    'Escuro',
+    'Claro',
+    'Verde',
+  ];
+
+  // Temas Vivos
+  final List<ThemeData> _vividThemes = [
+    // Laranja
     ThemeData(
       brightness: Brightness.light,
       primarySwatch: Colors.orange,
@@ -71,12 +94,13 @@ class _ThemeScreenState extends State<ThemeScreen> {
       iconTheme: const IconThemeData(color: Colors.orange),
       colorScheme: ColorScheme.light(
         primary: Colors.orange,
-        secondary: Colors.orangeAccent,
+        secondary: Colors.deepOrangeAccent,
         surface: const Color(0xFFFFE0B2),
       ),
       dividerColor: Colors.orange,
-      bottomAppBarTheme: BottomAppBarTheme(color: const Color(0xFFFFE0B2)),
+      bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFFFFE0B2)),
     ),
+    // Roxo
     ThemeData(
       brightness: Brightness.light,
       primarySwatch: Colors.purple,
@@ -86,12 +110,13 @@ class _ThemeScreenState extends State<ThemeScreen> {
       iconTheme: const IconThemeData(color: Colors.purple),
       colorScheme: ColorScheme.light(
         primary: Colors.purple,
-        secondary: Colors.deepPurpleAccent,
+        secondary: Colors.purpleAccent,
         surface: const Color(0xFFE1BEE7),
       ),
       dividerColor: Colors.purple,
-      bottomAppBarTheme: BottomAppBarTheme(color: const Color(0xFFE1BEE7)),
+      bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFFE1BEE7)),
     ),
+    // Turquesa
     ThemeData(
       brightness: Brightness.light,
       primarySwatch: Colors.teal,
@@ -105,8 +130,9 @@ class _ThemeScreenState extends State<ThemeScreen> {
         surface: const Color(0xFFB2DFDB),
       ),
       dividerColor: Colors.teal,
-      bottomAppBarTheme: BottomAppBarTheme(color: const Color(0xFFB2DFDB)),
+      bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFFB2DFDB)),
     ),
+    // Vermelho
     ThemeData(
       brightness: Brightness.light,
       primarySwatch: Colors.red,
@@ -120,8 +146,9 @@ class _ThemeScreenState extends State<ThemeScreen> {
         surface: const Color(0xFFFFCDD2),
       ),
       dividerColor: Colors.red,
-      bottomAppBarTheme: BottomAppBarTheme(color: const Color(0xFFFFCDD2)),
+      bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFFFFCDD2)),
     ),
+    // Índigo
     ThemeData(
       brightness: Brightness.light,
       primarySwatch: Colors.indigo,
@@ -135,8 +162,68 @@ class _ThemeScreenState extends State<ThemeScreen> {
         surface: const Color(0xFFC5CAE9),
       ),
       dividerColor: Colors.indigo,
-      bottomAppBarTheme: BottomAppBarTheme(color: const Color(0xFFC5CAE9)),
+      bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFFC5CAE9)),
     ),
+    // Marinho
+    ThemeData(
+      brightness: Brightness.light,
+      scaffoldBackgroundColor: const Color(0xFFE3F2FD),
+      cardColor: const Color(0xFF90CAF9),
+      appBarTheme: const AppBarTheme(backgroundColor: Color(0xFF90CAF9)),
+      iconTheme: const IconThemeData(color: Color(0xFF1565C0)),
+      colorScheme: ColorScheme.light(
+        primary: const Color(0xFF1565C0),
+        secondary: Colors.blueAccent,
+        surface: const Color(0xFF90CAF9),
+      ),
+      dividerColor: const Color(0xFF1565C0),
+      bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFF90CAF9)),
+    ),
+    // Rosa Choque
+    ThemeData(
+      brightness: Brightness.light,
+      scaffoldBackgroundColor: const Color(0xFFFFF0F6),
+      cardColor: const Color(0xFFFF80AB),
+      appBarTheme: const AppBarTheme(backgroundColor: Color(0xFFFF80AB)),
+      iconTheme: const IconThemeData(color: Color(0xFFD5006A)),
+      colorScheme: ColorScheme.light(
+        primary: const Color(0xFFD5006A),
+        secondary: Colors.pinkAccent,
+        surface: const Color(0xFFFF80AB),
+      ),
+      dividerColor: const Color(0xFFD5006A),
+      bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFFFF80AB)),
+    ),
+    // Verde Floresta
+    ThemeData(
+      brightness: Brightness.light,
+      scaffoldBackgroundColor: const Color(0xFFE8F5E9),
+      cardColor: const Color(0xFF388E3C),
+      appBarTheme: const AppBarTheme(backgroundColor: Color(0xFF388E3C)),
+      iconTheme: const IconThemeData(color: Color(0xFF1B5E20)),
+      colorScheme: ColorScheme.light(
+        primary: const Color(0xFF1B5E20),
+        secondary: Colors.greenAccent,
+        surface: const Color(0xFF388E3C),
+      ),
+      dividerColor: const Color(0xFF1B5E20),
+      bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFF388E3C)),
+    ),
+  ];
+  final List<String> _vividNames = [
+    'Laranja',
+    'Roxo',
+    'Turquesa',
+    'Vermelho',
+    'Índigo',
+    'Marinho',
+    'Rosa Choque',
+    'Verde Floresta',
+  ];
+
+  // Temas Minimalistas
+  final List<ThemeData> _minimalThemes = [
+    // Marrom
     ThemeData(
       brightness: Brightness.light,
       primarySwatch: Colors.brown,
@@ -150,8 +237,9 @@ class _ThemeScreenState extends State<ThemeScreen> {
         surface: const Color(0xFFBCAAA4),
       ),
       dividerColor: Colors.brown,
-      bottomAppBarTheme: BottomAppBarTheme(color: const Color(0xFFBCAAA4)),
+      bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFFBCAAA4)),
     ),
+    // Ciano
     ThemeData(
       brightness: Brightness.light,
       primarySwatch: Colors.cyan,
@@ -165,8 +253,9 @@ class _ThemeScreenState extends State<ThemeScreen> {
         surface: const Color(0xFFB2EBF2),
       ),
       dividerColor: Colors.cyan,
-      bottomAppBarTheme: BottomAppBarTheme(color: const Color(0xFFB2EBF2)),
+      bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFFB2EBF2)),
     ),
+    // Lima
     ThemeData(
       brightness: Brightness.light,
       primarySwatch: Colors.lime,
@@ -180,9 +269,9 @@ class _ThemeScreenState extends State<ThemeScreen> {
         surface: const Color(0xFFF0F4C3),
       ),
       dividerColor: Colors.lime,
-      bottomAppBarTheme: BottomAppBarTheme(color: const Color(0xFFF0F4C3)),
+      bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFFF0F4C3)),
     ),
-    // Tema para daltônicos
+    // Daltônico
     ThemeData(
       brightness: Brightness.light,
       scaffoldBackgroundColor: Colors.white,
@@ -191,122 +280,135 @@ class _ThemeScreenState extends State<ThemeScreen> {
       iconTheme: const IconThemeData(color: Color(0xFF0072B2)),
       colorScheme: ColorScheme.light(
         primary: const Color(0xFF0072B2),
-        secondary: const Color(0xFFE69F00),
+        secondary: const Color(0xFF009E73),
         surface: const Color(0xFFF7F7F7),
-        onSurface: Colors.black,
-        onPrimary: Colors.black,
-        onSecondary: Colors.black,
       ),
       dividerColor: const Color(0xFF009E73),
       bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFFF7F7F7)),
       textTheme: const TextTheme(
-        titleLarge: TextStyle(color: Colors.black),
-        bodyLarge: TextStyle(color: Colors.black),
-        bodyMedium: TextStyle(color: Colors.black),
+        bodyMedium: TextStyle(fontSize: 16, color: Colors.black),
       ),
     ),
+    // Amanhecer
+    ThemeData(
+      brightness: Brightness.light,
+      scaffoldBackgroundColor: const Color(0xFFFFF8E1),
+      cardColor: const Color(0xFFFFECB3),
+      appBarTheme: const AppBarTheme(backgroundColor: Color(0xFFFFECB3)),
+      iconTheme: const IconThemeData(color: Color(0xFFFFB300)),
+      colorScheme: ColorScheme.light(
+        primary: const Color(0xFFFFB300),
+        secondary: const Color(0xFFFFF176),
+        surface: const Color(0xFFFFECB3),
+      ),
+      dividerColor: const Color(0xFFFFB300),
+      bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFFFFECB3)),
+    ),
+    // Café
+    ThemeData(
+      brightness: Brightness.light,
+      scaffoldBackgroundColor: const Color(0xFFD7CCC8),
+      cardColor: const Color(0xFF8D6E63),
+      appBarTheme: const AppBarTheme(backgroundColor: Color(0xFF8D6E63)),
+      iconTheme: const IconThemeData(color: Color(0xFF4E342E)),
+      colorScheme: ColorScheme.light(
+        primary: const Color(0xFF4E342E),
+        secondary: const Color(0xFFA1887F),
+        surface: const Color(0xFF8D6E63),
+      ),
+      dividerColor: const Color(0xFF4E342E),
+      bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFF8D6E63)),
+    ),
   ];
-
-  final List<String> _allThemeNames = [
-    'Romântico',
-    'Claro',
-    'Verde',
-    'Laranja',
-    'Roxo',
-    'Turquesa',
-    'Vermelho',
-    'Índigo',
+  final List<String> _minimalNames = [
     'Marrom',
     'Ciano',
     'Lima',
     'Daltônico',
+    'Amanhecer',
+    'Café',
+  ];
+
+  // Unifica para seleção global
+  List<ThemeData> get _allThemes => [
+    ..._popularThemes,
+    ..._vividThemes,
+    ..._minimalThemes,
+  ];
+  List<String> get _allNames => [
+    ..._popularNames,
+    ..._vividNames,
+    ..._minimalNames,
   ];
 
   @override
   Widget build(BuildContext context) {
     final currentTheme = Theme.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Temas do App')),
-      backgroundColor: currentTheme.scaffoldBackgroundColor,
-      body: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Escolha um tema:',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 28),
-            SizedBox(
-              height: 240,
-              child: PageView.builder(
-                controller: _pageController,
-                itemCount: _allThemes.length,
-                onPageChanged: (i) {
-                  setState(() => _selected = i);
-                  Provider.of<ThemeNotifier>(context, listen: false).setTheme(_allThemes[i]);
-                },
-                itemBuilder: (context, i) {
-                  final theme = _allThemes[i];
-                  final isSelected = _selected == i;
-                  return AnimatedContainer(
-                    duration: const Duration(milliseconds: 350),
-                    curve: Curves.easeInOutCubic,
-                    margin: EdgeInsets.symmetric(horizontal: isSelected ? 8 : 18, vertical: isSelected ? 0 : 18),
-                    width: 200,
-                    decoration: BoxDecoration(
-                      color: theme.scaffoldBackgroundColor,
-                      borderRadius: BorderRadius.circular(28),
-                      border: Border.all(
-                        color: isSelected ? theme.colorScheme.primary : Colors.grey.shade300,
-                        width: isSelected ? 3 : 1.5,
-                      ),
-                      boxShadow: [
-                        if (isSelected)
-                          BoxShadow(
-                            color: theme.colorScheme.primary.withOpacity(0.18),
-                            blurRadius: 18,
-                            offset: const Offset(0, 8),
-                          ),
-                      ],
-                    ),
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(28),
-                      onTap: () {
-                        setState(() => _selected = i);
-                        Provider.of<ThemeNotifier>(context, listen: false).setTheme(_allThemes[i]);
-                        _pageController.animateToPage(
-                          i,
-                          duration: const Duration(milliseconds: 350),
-                          curve: Curves.easeInOutCubic,
-                        );
-                      },
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          _ColorDots(
-                            primary: theme.colorScheme.primary,
-                            secondary: theme.colorScheme.secondary,
-                          ),
-                          const SizedBox(height: 18),
-                          Text(
-                            _allThemeNames[i],
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
-                              color: theme.iconTheme.color,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
+      appBar: AppBar(
+        title: const Text('Temas do App'),
+        backgroundColor: currentTheme.appBarTheme.backgroundColor,
+        elevation: 0,
+      ),
+      body: ListView.builder(
+        padding: const EdgeInsets.all(20),
+        itemCount: _allThemes.length,
+        itemBuilder: (context, i) {
+          return _ThemeCard(
+            theme: _allThemes[i],
+            name: _allNames[i],
+            selected: i == _selected,
+            onTap: () {
+              setState(() => _selected = i);
+              Provider.of<ThemeNotifier>(context, listen: false)
+                  .setTheme(_allThemes[i]);
+            },
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _ThemeCard extends StatelessWidget {
+  final ThemeData theme;
+  final String name;
+  final bool selected;
+  final VoidCallback onTap;
+
+  const _ThemeCard({
+    required this.theme,
+    required this.name,
+    required this.selected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final primary = theme.colorScheme.primary;
+    final secondary = theme.colorScheme.secondary;
+    return Card(
+      elevation: selected ? 8 : 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(18),
+        side: selected
+            ? BorderSide(color: primary, width: 2)
+            : BorderSide(color: Colors.grey.shade300, width: 1),
+      ),
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      child: ListTile(
+        leading: _ColorDots(primary: primary, secondary: secondary),
+        title: Text(
+          name,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: selected ? primary : Colors.black,
+          ),
         ),
+        trailing: selected
+            ? Icon(Icons.check_circle, color: primary)
+            : null,
+        onTap: onTap,
       ),
     );
   }
@@ -320,7 +422,7 @@ class _ColorDots extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
       children: [
         Container(
           width: 28,

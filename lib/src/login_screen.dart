@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'home_screen.dart';
 import 'register_screen.dart';
-import 'package:myapp/main.dart';
+import '../main.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -10,75 +9,112 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
-  final PageController _pageController = PageController();
-  final TextEditingController _usernameController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  bool _rememberMe = false;
+class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStateMixin {
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  late final AnimationController _logoAnimController;
+  late final Animation<double> _logoScale;
+  bool _showForm = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _logoAnimController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+    );
+    _logoScale = Tween<double>(begin: 0.85, end: 1.0).animate(
+      CurvedAnimation(parent: _logoAnimController, curve: Curves.easeOutBack),
+    );
+    Future.delayed(const Duration(milliseconds: 150), () {
+      _logoAnimController.forward().then((_) {
+        setState(() => _showForm = true);
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _logoAnimController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: PageView(
-        controller: _pageController,
-        physics: const NeverScrollableScrollPhysics(),
-        children: [
-          _buildLoginScreen(context),
-          const RegisterScreen(),
-        ],
-      ),
-    );
-  }
+    final theme = Theme.of(context);
+    final primary = theme.colorScheme.primary;
+    final secondary = theme.colorScheme.secondary;
 
-  Widget _buildLoginScreen(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      height: double.infinity,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Colors.pink.shade100, const Color(0xFFF8CBE6)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-      ),
-      child: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-              const SizedBox(height: 30),
-              Image.asset(
-                'assets/logoApp.png',
-                width: 280,
-                height: 200,
-                errorBuilder: (context, error, stackTrace) => const Icon(Icons.image_not_supported, size: 100),
-              ),
-              const SizedBox(height: 10),
-              const Text(
-                'Mais tempo com quem realmente importa.',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.white),
-              ),
-              const SizedBox(height: 30),
-              _LoginScreenForm(
-                usernameController: _usernameController,
-                passwordController: _passwordController,
-                rememberMe: _rememberMe,
-                onRememberChanged: (value) => setState(() => _rememberMe = value),
-                onRegisterTap: () {
-                  _pageController.nextPage(
-                    duration: const Duration(milliseconds: 500),
-                    curve: Curves.easeInOut,
-                  );
-                },
-                onLoginTap: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => const MainPage()),
-                  );
-                },
-              ),
+    return Scaffold(
+      body: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              primary,
+              secondary,
+              primary,
             ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: Center(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Column(
+                children: [
+                  const SizedBox(height: 30),
+                  AnimatedBuilder(
+                    animation: _logoAnimController,
+                    builder: (context, child) => AnimatedOpacity(
+                      duration: const Duration(milliseconds: 300),
+                      opacity: _logoAnimController.value,
+                      child: Transform.scale(
+                        scale: _logoScale.value,
+                        child: child,
+                      ),
+                    ),
+                    child: Image.asset(
+                      'assets/logoApp.png',
+                      width: 280,
+                      height: 200,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  const Text(
+                    'Bem-vindo!',
+                    style: TextStyle(
+                      fontSize: 23,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+                  AnimatedOpacity(
+                    duration: const Duration(milliseconds: 400),
+                    opacity: _showForm ? 1 : 0,
+                    curve: Curves.easeOutCubic,
+                    child: AnimatedSlide(
+                      duration: const Duration(milliseconds: 400),
+                      offset: _showForm ? Offset(0, 0) : Offset(0, 0.15),
+                      curve: Curves.easeOutCubic,
+                      child: _LoginScreenForm(
+                        emailController: _emailController,
+                        passwordController: _passwordController,
+                        onRegisterTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const RegisterScreen()),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
       ),
@@ -87,67 +123,92 @@ class _LoginScreenState extends State<LoginScreen> {
 }
 
 class _LoginScreenForm extends StatelessWidget {
-  final TextEditingController usernameController;
+  final TextEditingController emailController;
   final TextEditingController passwordController;
-  final bool rememberMe;
-  final Function(bool) onRememberChanged;
   final VoidCallback onRegisterTap;
-  final VoidCallback onLoginTap;
 
   const _LoginScreenForm({
-    super.key,
-    required this.usernameController,
+    required this.emailController,
     required this.passwordController,
-    required this.rememberMe,
-    required this.onRememberChanged,
     required this.onRegisterTap,
-    required this.onLoginTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 8,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      child: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const SizedBox(height: 20),
-            TextField(
-              controller: usernameController,
-              decoration: InputDecoration(
-                labelText: 'E-mail',
-                prefixIcon: const Icon(Icons.person),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
-              ),
+    final primaryColor = Theme.of(context).colorScheme.primary;
+    return Column(
+      children: [
+        Card(
+          color: Colors.white,
+          elevation: 8,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          child: Padding(
+            padding: const EdgeInsets.all(10),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: emailController,
+                  decoration: InputDecoration(
+                    labelText: 'E-mail',
+                    prefixIcon: Icon(Icons.email),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: passwordController,
+                  obscureText: true,
+                  decoration: InputDecoration(
+                    labelText: 'Senha',
+                    prefixIcon: Icon(Icons.lock),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: primaryColor,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (context) => const MainPage()),
+                          );
+                        },
+                        child: const Text(
+                          'Entrar',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: passwordController,
-              obscureText: true,
-              decoration: InputDecoration(
-                labelText: 'Senha',
-                prefixIcon: const Icon(Icons.lock),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
-              ),
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: onLoginTap,
-              child: const Text('Login'),
-            ),
-            TextButton(
-              onPressed: onRegisterTap,
-              child: const Text(
-                'Criar conta',
-                style: TextStyle(fontSize: 12, color: Colors.blueAccent),
-              ),
-            ),
-          ],
+          ),
         ),
-      ),
+        TextButton(
+          onPressed: onRegisterTap,
+          child: const Text(
+            'Não tem conta? Cadastre-se',
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.blueAccent,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

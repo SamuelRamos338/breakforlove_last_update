@@ -12,9 +12,28 @@ import 'components/bottom_nav_bar.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('pt_BR', null);
+
+  final romanticTheme = ThemeData(
+    brightness: Brightness.light,
+    primarySwatch: Colors.pink,
+    scaffoldBackgroundColor: Colors.white,
+    cardColor: const Color(0xFFFFE5E0),
+    appBarTheme: const AppBarTheme(
+      backgroundColor: Color(0xFFFADCD9),
+    ),
+    iconTheme: const IconThemeData(color: Color(0xFFE5738A)),
+    colorScheme: ColorScheme.light(
+      primary: const Color(0xFFE5738A),
+      secondary: const Color(0xFFF8BBD0),
+      surface: const Color(0xFFFADCD9),
+    ),
+    dividerColor: const Color(0xFFE8B9B2),
+    bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFFE8B9B2)),
+  );
+
   runApp(
     ChangeNotifierProvider(
-      create: (_) => ThemeNotifier(ThemeData.light()),
+      create: (_) => ThemeNotifier(romanticTheme),
       child: const MyApp(),
     ),
   );
@@ -36,7 +55,7 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-// O restante do MainPage permanece igual
+
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
 
@@ -55,6 +74,10 @@ class _MainPageState extends State<MainPage> {
     ProfileScreen(),
   ];
 
+  void _onTabChange(int index) {
+    _pageController.jumpToPage(index);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,7 +85,7 @@ class _MainPageState extends State<MainPage> {
         padding: const EdgeInsets.only(top: 40),
         child: PageView(
           controller: _pageController,
-          physics: const BouncingScrollPhysics(),
+          // Removido physics para permitir swipe lateral
           children: _pages,
           onPageChanged: (index) {
             setState(() => _selectedIndex = index);
@@ -71,16 +94,7 @@ class _MainPageState extends State<MainPage> {
       ),
       bottomNavigationBar: BottomNavBar(
         currentIndex: _selectedIndex,
-        onTabChange: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-          _pageController.animateToPage(
-            index,
-            duration: const Duration(milliseconds: 200),
-            curve: Curves.easeInOut,
-          );
-        },
+        onTabChange: _onTabChange,
       ),
     );
   }
