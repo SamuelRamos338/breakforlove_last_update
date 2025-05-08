@@ -3,6 +3,7 @@ import 'user_data_screen.dart';
 import 'couple_screen.dart';
 import 'about_app_screen.dart';
 import 'theme_screen.dart';
+import 'login_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -63,6 +64,18 @@ class ProfileScreen extends StatelessWidget {
               );
             },
           ),
+          // Card de logout
+          _ProfileScreenItem(
+            texto: 'Sair',
+            descricao: 'Desconectar da sua conta.',
+            icone: Icons.logout,
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const LoginScreen()),
+              );
+            },
+          ),
           const SizedBox(height: 30),
           const Spacer(),
           const Text(
@@ -91,10 +104,11 @@ class _ProfileScreenItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final iconColor = Theme.of(context).iconTheme.color;
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8),
       child: ListTile(
-        leading: Icon(icone, color: Colors.pink),
+        leading: Icon(icone, color: iconColor),
         title: Text(texto, style: const TextStyle(fontWeight: FontWeight.bold)),
         subtitle: Text(descricao),
         trailing: const Icon(Icons.arrow_forward),
