@@ -62,11 +62,17 @@ O **BreakForLove** tem como missão ajudar casais a reduzirem o uso excessivo do
 Somos uma equipe de 9 pessoas apaixonadas por tecnologia e bem-estar digital.
 
 **Liderança:**
-- Back-end: Samuel Ramos
+- Front-end: Samuel Ramos 
 - Back-end: Maria Vitória
-
----
-
-## 📲 Instalação
-
-1. Clone este repositório:
+  
+**Equipe:**
+  - Jailson
+  - Gabriel
+  - Joan
+  - Thiago
+  - Mariana
+  - Gabrielly
+  - Fábio
+  - Joan
+  - Juan
+  - Ian

@@ -110,7 +110,7 @@ class _CoupleScreenState extends State<CoupleScreen> {
             ),
             const SizedBox(height: 24),
             const Text(
-              'Bolsonaro & Vitoria',
+              'Bolsonaro, Lula & Samuel',
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
