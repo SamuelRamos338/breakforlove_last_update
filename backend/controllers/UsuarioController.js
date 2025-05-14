@@ -2,7 +2,7 @@ const Usuario = require('../models/UsuarioModel');
 const bcrypt = require('bcryptjs');
 
 const UsuarioController = {
-  // Cadastro de novo usuário
+  // #region Cadastro de novo usuário
   async cadastrar(req, res) {
     const { usuario, senha, nome } = req.body;
 
@@ -20,14 +20,25 @@ const UsuarioController = {
       const novoUsuario = new Usuario({ usuario, senha: senhaHash, nome });
       await novoUsuario.save();
 
+      //#region Adicionar Design
+      const designPadrao = new Design({
+        usuario: novoUsuario._id,
+        tema: 0,
+        fotoPerfil: 0
+      });
+      
+      await designPadrao.save();
+      //#endregion
+
       res.status(201).json({ msg: 'Usuário cadastrado com sucesso' });
     } catch (error) {
       console.error('Erro no cadastro:', error);
       res.status(500).json({ msg: 'Erro interno no servidor' });
     }
   },
+  //#endregion
 
-  // Login de usuário
+  //#region Login de usuário
   async login(req, res) {
     const { usuario, senha } = req.body;
 
@@ -55,6 +66,7 @@ const UsuarioController = {
       res.status(500).json({ msg: 'Erro interno no servidor' });
     }
   }
+  //#endregion
 };
 
 module.exports = UsuarioController;

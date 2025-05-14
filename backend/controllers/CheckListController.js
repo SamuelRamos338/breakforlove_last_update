@@ -2,7 +2,7 @@ const CheckList = require('../models/CheckListModel');
 const Usuario = require('../models/UsuarioModel');
 
 const CheckListController = {
-    // Criar um novo item de checklist
+    //#region Criar um novo item de checklist
     async criarCheckList(req, res) {
         const { descricao } = req.body;
         const usuarioId = req.usuarioId;
@@ -20,8 +20,9 @@ const CheckListController = {
             res.status(500).json({ msg: 'Erro interno no servidor' });
         }
     },
+    //#endregion
 
-    // Listar itens de checklist do usuário autenticado
+    //#region Listar itens de checklist
     async listarCheckList(req, res) {
         const usuarioId = req.usuarioId;
 
@@ -33,8 +34,9 @@ const CheckListController = {
             res.status(500).json({ msg: 'Erro interno no servidor' });
         }
     },
+    //#endregion
 
-    // Atualizar um item de checklist
+    //#region Atualizar um item de checklist
     async atualizarCheckList(req, res) {
         const { id } = req.params;
         const { descricao, marcado } = req.body;
@@ -61,8 +63,9 @@ const CheckListController = {
             res.status(500).json({ msg: 'Erro interno no servidor' });
         }
     },
+    //#endregion
 
-    // Deletar um item de checklist
+    //#region Deletar um item de checklist
     async deletarCheckList(req, res) {
         const { id } = req.params;
         const usuarioId = req.usuarioId;
@@ -80,6 +83,7 @@ const CheckListController = {
             res.status(500).json({ msg: 'Erro interno no servidor' });
         }
     }
+    //#endregion
 };
 
 module.exports = CheckListController;

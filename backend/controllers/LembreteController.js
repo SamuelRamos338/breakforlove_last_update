@@ -2,7 +2,7 @@ const Lembrete = require('../models/LembreteModel');
 const Usuario = require('../models/UsuarioModel');
 
 const LembreteController = {
-    // Criar um novo lembrete
+    //#region Criar um novo lembrete
     async criarLembrete(req, res) {
         const { descricao, data } = req.body;
         const usuarioId = req.usuarioId;
@@ -20,8 +20,9 @@ const LembreteController = {
             res.status(500).json({ msg: 'Erro interno no servidor' });
         }
     },
+    //#endregion
 
-    // Listar lembretes do usuário autenticado
+    //#region Listar lembretes do usuário autenticado
     async listarLembretes(req, res) {
         const usuarioId = req.usuarioId;
 
@@ -33,8 +34,9 @@ const LembreteController = {
             res.status(500).json({ msg: 'Erro interno no servidor' });
         }
     },
+    //#endregion
     
-    // Atualizar um lembrete
+    //#region Atualizar um lembrete
     async atualizarLembrete(req, res) {
         const { id } = req.params;
         const { descricao, data } = req.body;
@@ -61,8 +63,9 @@ const LembreteController = {
             res.status(500).json({ msg: 'Erro interno no servidor' });
         }
     },
+    //#endregion
 
-    // Deletar um lembrete
+    //#region Deletar um lembrete
     async deletarLembrete(req, res) {
         const { id } = req.params;
         const usuarioId = req.usuarioId;
@@ -80,6 +83,7 @@ const LembreteController = {
             res.status(500).json({ msg: 'Erro interno no servidor' });
         }
     }
+    //#endregion
 };
 
 module.exports = LembreteController;
