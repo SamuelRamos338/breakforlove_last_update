@@ -5,14 +5,14 @@ const CheckListController = {
     //#region Criar um novo item de checklist
     async criarCheckList(req, res) {
         const { descricao } = req.body;
-        const usuarioId = req.usuarioId;
+        const { conexaoId } = req.params;
 
         if (!descricao) {
             return res.status(400).json({ msg: 'Descrição é obrigatória' });
         }
 
         try {
-            const novoCheckList = new CheckList({ descricao, marcado : false, usuario: usuarioId });
+            const novoCheckList = new CheckList({ descricao, marcado : false, conexao: conexaoId });
             await novoCheckList.save();
             res.status(201).json(novoCheckList);
         } catch (error) {
@@ -24,10 +24,10 @@ const CheckListController = {
 
     //#region Listar itens de checklist
     async listarCheckList(req, res) {
-        const usuarioId = req.usuarioId;
+        const { conexaoId } = req.params;
 
         try {
-            const checkList = await CheckList.find({ usuario: usuarioId }).populate('usuario', 'nome usuario');
+            const checkList = await CheckList.find({ conexao: conexaoId });
             res.status(200).json(checkList);
         } catch (error) {
             console.error('Erro ao listar checklist:', error);
@@ -40,7 +40,7 @@ const CheckListController = {
     async atualizarCheckList(req, res) {
         const { id } = req.params;
         const { descricao, marcado } = req.body;
-        const usuarioId = req.usuarioId;
+        const { conexaoId } = req.params;
 
         if (!descricao) {
             return res.status(400).json({ msg: 'Descrição é obrigatória' });
@@ -48,7 +48,7 @@ const CheckListController = {
 
         try {
             const checkList = await CheckList.findOneAndUpdate(
-                { _id: id, usuario: usuarioId },
+                { _id: id, conexao: conexaoId },
                 { descricao, marcado },
                 { new: true }
             );
@@ -68,10 +68,10 @@ const CheckListController = {
     //#region Deletar um item de checklist
     async deletarCheckList(req, res) {
         const { id } = req.params;
-        const usuarioId = req.usuarioId;
+        const { conexaoId } = req.params;
 
         try {
-            const checkList = await CheckList.findOneAndDelete({ _id: id, usuario: usuarioId });
+            const checkList = await CheckList.findOneAndDelete({ _id: id, conexao: conexaoId });
 
             if (!checkList) {
                 return res.status(404).json({ msg: 'Item de checklist não encontrado' });

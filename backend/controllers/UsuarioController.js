@@ -65,6 +65,41 @@ const UsuarioController = {
       console.error('Erro no login:', error);
       res.status(500).json({ msg: 'Erro interno no servidor' });
     }
+  },
+  //#endregion
+
+  //#region Alterar dados do usuário
+  async atualizar(req, res) {
+    const { id } = req.params; // id do usuário a ser alterado
+    const { usuario, nome, senha } = req.body;
+
+    try {
+      const user = await Usuario.findById(id);
+      if (!user) {
+        return res.status(404).json({ msg: 'Usuário não encontrado' });
+      }
+
+      if (usuario && usuario !== user.usuario) {
+        const usuarioExistente = await Usuario.findOne({ usuario });
+        if (usuarioExistente) {
+          return res.status(400).json({ msg: 'Usuário já está em uso' });
+        }
+        user.usuario = usuario;
+      }
+
+      if (nome) user.nome = nome;
+
+      if (senha) {
+        const senhaHash = await bcrypt.hash(senha, 10);
+        user.senha = senhaHash;
+      }
+
+      await user.save();
+      res.status(200).json({ msg: 'Usuário atualizado com sucesso', usuario: { id: user._id, usuario: user.usuario, nome: user.nome } });
+    } catch (error) {
+      console.error('Erro ao atualizar usuário:', error);
+      res.status(500).json({ msg: 'Erro interno no servidor' });
+    }
   }
   //#endregion
 };

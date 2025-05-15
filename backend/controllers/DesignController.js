@@ -3,7 +3,7 @@ const Design = require('../models/DesignModel');
 const DesignController = {
     //#region Obter o design do usuário
     async obterDesign(req, res) {
-        const usuarioId = req.usuarioId;
+        const { usuarioId } = req.params;
 
         try {
             const design = await Design.findOne({ usuario: usuarioId }).populate('usuario', 'nome usuario');
@@ -21,7 +21,7 @@ const DesignController = {
     //#region Atualizar o tema do design
     async atualizarTema(req, res) {
         const { tema } = req.body;
-        const usuarioId = req.usuarioId;
+        const { usuarioId } = req.params;
 
         if (tema === undefined) {
             return res.status(400).json({ msg: 'Tema é obrigatório' });
@@ -49,7 +49,7 @@ const DesignController = {
     //#region Atualizar a foto de perfil do design
     async atualizarFotoPerfil(req, res) {
         const { fotoPerfil } = req.body;
-        const usuarioId = req.usuarioId;
+        const { usuarioId } = req.params;
 
         if (fotoPerfil === undefined) {
             return res.status(400).json({ msg: 'Foto de perfil é obrigatória' });

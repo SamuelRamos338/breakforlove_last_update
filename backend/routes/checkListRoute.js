@@ -3,15 +3,15 @@ const router = express.Router();
 const CheckListController = require('../controllers/CheckListController');
 
 //Criar CheckList
-router.post('/criar', CheckListController.criarCheckList);
+router.post('/criar/:conexaoId', CheckListController.criarCheckList);
 
 //Listar CheckList
-router.get('/listar', CheckListController.listarCheckList);
+router.get('/listar/:conexaoId', CheckListController.listarCheckList);
 
 //Atualizar CheckList
-router.put('/atualizar/:id', CheckListController.atualizarCheckList);
+router.put('/atualizar/:conexaoId', CheckListController.atualizarCheckList);
 
 //Deletar CheckList
-router.delete('/deletar/:id', CheckListController.deletarCheckList);
+router.delete('/deletar/:conexaoId', CheckListController.deletarCheckList);
 
 module.exports = router;
