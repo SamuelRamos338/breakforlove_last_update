@@ -3,15 +3,15 @@ const router = express.Router();
 const LembreteController = require('../controllers/LembreteController');
 
 //Criar lembrete
-router.post('/criar', LembreteController.criarLembrete);
+router.post('/criar/:conexaoId', LembreteController.criarLembrete);
 
 //Listar lembretes
-router.get('/listar', LembreteController.listarLembretes);
+router.get('/listar/:conexaoId', LembreteController.listarLembretes);
 
 //Atualizar lembrete
-router.put('/atualizar/:id', LembreteController.atualizarLembrete);
+router.put('/atualizar/:conexaoId', LembreteController.atualizarLembrete);
 
 //Deletar lembrete
-router.delete('/deletar/:id', LembreteController.deletarLembrete);
+router.delete('/deletar/:conexaoId', LembreteController.deletarLembrete);
 
 module.exports = router;
