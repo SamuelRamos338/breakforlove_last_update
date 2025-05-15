@@ -1,17 +1,18 @@
 const Lembrete = require('../models/LembreteModel');
+const Usuario = require('../models/UsuarioModel');
 
 const LembreteController = {
     //#region Criar um novo lembrete
     async criarLembrete(req, res) {
         const { descricao, data } = req.body;
-        const { conexaoId } = req.params;
+        const usuarioId = req.usuarioId;
 
         if (!descricao) {
             return res.status(400).json({ msg: 'Descrição é obrigatória' });
         }
 
         try {
-            const novoLembrete = new Lembrete({ descricao, data, conexao: conexaoId });
+            const novoLembrete = new Lembrete({ descricao, data, usuario: usuarioId });
             await novoLembrete.save();
             res.status(201).json(novoLembrete);
         } catch (error) {
@@ -23,10 +24,10 @@ const LembreteController = {
 
     //#region Listar lembretes do usuário autenticado
     async listarLembretes(req, res) {
-        const { conexaoId } = req.params;
+        const usuarioId = req.usuarioId;
 
         try {
-            const lembretes = await Lembrete.find({ conexao: conexaoId });
+            const lembretes = await Lembrete.find({ usuario: usuarioId }).populate('usuario', 'nome usuario');
             res.status(200).json(lembretes);
         } catch (error) {
             console.error('Erro ao listar lembretes:', error);
@@ -39,7 +40,7 @@ const LembreteController = {
     async atualizarLembrete(req, res) {
         const { id } = req.params;
         const { descricao, data } = req.body;
-        const { conexaoId } = req.params;
+        const usuarioId = req.usuarioId;
 
         if (!descricao) {
             return res.status(400).json({ msg: 'Descrição é obrigatória' });
@@ -47,7 +48,7 @@ const LembreteController = {
 
         try {
             const lembrete = await Lembrete.findOneAndUpdate(
-                { _id: id, conexao: conexaoId },
+                { _id: id, usuario: usuarioId },
                 { descricao, data },
                 { new: true }
             );
@@ -67,10 +68,10 @@ const LembreteController = {
     //#region Deletar um lembrete
     async deletarLembrete(req, res) {
         const { id } = req.params;
-        const { conexaoId } = req.params;
+        const usuarioId = req.usuarioId;
 
         try {
-            const lembrete = await Lembrete.findOneAndDelete({ _id: id, conexao: conexaoId });
+            const lembrete = await Lembrete.findOneAndDelete({ _id: id, usuario: usuarioId });
 
             if (!lembrete) {
                 return res.status(404).json({ msg: 'Lembrete não encontrado ou não autorizado' });

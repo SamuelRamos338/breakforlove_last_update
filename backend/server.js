@@ -13,19 +13,13 @@ mongoose.connect('mongodb+srv://breakforlove:breakforlove123@breakforlove.0paxop
   .catch(err => console.error('Erro ao conectar ao mongoDB Atlas', err));
 
 const usuarioRoutes = require('./routes/usuarioRoute');
-app.use('/api/usuario', usuarioRoutes);
+app.use('/api/usuarioRoute', usuarioRoutes);
 
 const lembreteRoutes = require('./routes/lembreteRoute');
-app.use('/api/lembrete', lembreteRoutes);
+app.use('/api/lembreteRoute', lembreteRoutes);
 
 const checkListRoutes = require('./routes/checkListRoute');
-app.use('/api/checkList', checkListRoutes);
-
-const designRoutes = require('./routes/designRoute');
-app.use('/api/design', designRoutes);
-
-const conexaoRoutes = require('./routes/conexaoRoute');
-app.use('/api/conexao', conexaoRoutes);
+app.use('/api/checkListRoute', checkListRoutes);
 
 app.listen(port, () => {
   console.log(`Servidor rodando na porta ${port}`);
