@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'register_screen.dart';
+import 'package:http/http.dart' as http;
 import '../main.dart';
+import 'register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -15,6 +17,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
   late final AnimationController _logoAnimController;
   late final Animation<double> _logoScale;
   bool _showForm = false;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -37,6 +40,44 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
   void dispose() {
     _logoAnimController.dispose();
     super.dispose();
+  }
+
+  Future<void> _login() async {
+    setState(() => _isLoading = true);
+    try {
+      final response = await http.post(
+        Uri.parse('http://192.168.0.104:3000/api/usuarioRoute/login'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'usuario': _userController.text,
+          'senha': _passwordController.text,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data['msg'] == 'Login realizado com sucesso') {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const MainPage()),
+          );
+        } else {
+          _showError(data['msg']);
+        }
+      } else {
+        _showError('Erro: ${response.statusCode}');
+      }
+    } catch (e) {
+      _showError('Erro ao conectar ao servidor. Tente novamente.');
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
   }
 
   @override
@@ -103,6 +144,8 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                       child: _LoginScreenForm(
                         userController: _userController,
                         passwordController: _passwordController,
+                        onLoginTap: _login,
+                        isLoading: _isLoading,
                         onRegisterTap: () {
                           Navigator.push(
                             context,
@@ -125,12 +168,16 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
 class _LoginScreenForm extends StatelessWidget {
   final TextEditingController userController;
   final TextEditingController passwordController;
+  final VoidCallback onLoginTap;
   final VoidCallback onRegisterTap;
+  final bool isLoading;
 
   const _LoginScreenForm({
     required this.userController,
     required this.passwordController,
+    required this.onLoginTap,
     required this.onRegisterTap,
+    required this.isLoading,
   });
 
   @override
@@ -152,7 +199,7 @@ class _LoginScreenForm extends StatelessWidget {
                   controller: userController,
                   decoration: InputDecoration(
                     labelText: 'Usuário',
-                    prefixIcon: Icon(Icons.person , color: iconColor),
+                    prefixIcon: Icon(Icons.person, color: iconColor),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),
@@ -164,7 +211,7 @@ class _LoginScreenForm extends StatelessWidget {
                   obscureText: true,
                   decoration: InputDecoration(
                     labelText: 'Senha',
-                    prefixIcon: Icon(Icons.lock , color: iconColor),
+                    prefixIcon: Icon(Icons.lock, color: iconColor),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),
@@ -181,13 +228,10 @@ class _LoginScreenForm extends StatelessWidget {
                             borderRadius: BorderRadius.circular(20),
                           ),
                         ),
-                        onPressed: () {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(builder: (context) => const MainPage()),
-                          );
-                        },
-                        child: const Text(
+                        onPressed: isLoading ? null : onLoginTap,
+                        child: isLoading
+                            ? const CircularProgressIndicator(color: Colors.white)
+                            : const Text(
                           'Entrar',
                           style: TextStyle(color: Colors.white),
                         ),

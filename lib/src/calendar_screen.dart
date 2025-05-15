@@ -1,7 +1,7 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:intl/date_symbol_data_local.dart';
-import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
 
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({super.key});
@@ -12,111 +12,145 @@ class CalendarScreen extends StatefulWidget {
 
 class _CalendarScreenState extends State<CalendarScreen> {
   DateTime? _selectedDate;
-  final Map<String, String> _reminders = {};
+  List<Map<String, dynamic>> _reminders = [];
   final TextEditingController _reminderController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    initializeDateFormatting('pt_BR', null);
+    _fetchReminders(); // Carrega os lembretes ao iniciar
   }
 
-  String _dateKey(DateTime date) =>
-      "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
+  // Função para buscar lembretes do backend
+  Future<void> _fetchReminders() async {
+    try {
+      final response = await http.get(
+        Uri.parse('http://192.168.0.104:3000/api/lembreteRoute'),
+        headers: {'Content-Type': 'application/json'},
+      );
 
-  void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
-    setState(() {
-      _selectedDate = selectedDay;
-      _reminderController.text = _reminders[_dateKey(selectedDay)] ?? "";
+      if (response.statusCode == 200) {
+        setState(() {
+          _reminders = List<Map<String, dynamic>>.from(jsonDecode(response.body));
+        });
+      } else {
+        _showError('Erro ao carregar lembretes.');
+      }
+    } catch (e) {
+      _showError('Erro ao conectar ao servidor.');
+    }
+  }
+
+  // Função para adicionar ou editar lembrete
+  Future<void> _saveReminder({String? id}) async {
+    if (_selectedDate == null || _reminderController.text.isEmpty) return;
+
+    final body = jsonEncode({
+      'descricao': _reminderController.text,
+      'data': _selectedDate!.toIso8601String(),
     });
+
+    try {
+      final response = id == null
+          ? await http.post(
+        Uri.parse('http://192.168.0.104:3000/api/lembreteRoute'),
+        headers: {'Content-Type': 'application/json'},
+        body: body,
+      )
+          : await http.put(
+        Uri.parse('http://192.168.0.104:3000/api/lembreteRoute/$id'),
+        headers: {'Content-Type': 'application/json'},
+        body: body,
+      );
+
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        _fetchReminders(); // Atualiza a lista de lembretes
+        Navigator.pop(context);
+      } else {
+        _showError('Erro ao salvar lembrete.');
+      }
+    } catch (e) {
+      _showError('Erro ao conectar ao servidor.');
+    }
   }
 
-  Future<void> _showReminderDialog({bool isEditing = false}) async {
+  // Função para deletar lembrete
+  Future<void> _deleteReminder(String id) async {
+    try {
+      final response = await http.delete(
+        Uri.parse('http://192.168.0.104:3000/api/lembreteRoute/$id'),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        _fetchReminders(); // Atualiza a lista de lembretes
+      } else {
+        _showError('Erro ao deletar lembrete.');
+      }
+    } catch (e) {
+      _showError('Erro ao conectar ao servidor.');
+    }
+  }
+
+  // Exibe o diálogo para adicionar ou editar lembretes
+  Future<void> _showReminderDialog({String? id, String? descricao}) async {
     if (_selectedDate == null) return;
-    if (!isEditing) _reminderController.clear();
+    _reminderController.text = descricao ?? '';
 
     await showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(isEditing ? "Editar Lembrete" : "Adicionar Lembrete"),
+        title: Text(id == null ? 'Adicionar Lembrete' : 'Editar Lembrete'),
         content: TextField(
           controller: _reminderController,
-          decoration: const InputDecoration(labelText: "Digite o lembrete"),
+          decoration: const InputDecoration(labelText: 'Lembrete'),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text("Cancelar"),
+            child: const Text('Cancelar'),
           ),
-          ElevatedButton(
-            onPressed: () {
-              if (_selectedDate != null && _reminderController.text.trim().isNotEmpty) {
-                final key = _dateKey(_selectedDate!);
-                setState(() {
-                  _reminders[key] = _reminderController.text.trim();
-                });
-              }
-              Navigator.pop(context);
-            },
-            child: const Text("Salvar"),
+          TextButton(
+            onPressed: () => _saveReminder(id: id),
+            child: const Text('Salvar'),
           ),
         ],
       ),
     );
-
-    setState(() {
-      _reminderController.text = _reminders[_dateKey(_selectedDate!)] ?? "";
-    });
   }
 
-  Widget _buildReminderCard(String key, String reminder) {
-    final date = DateTime.parse("$key 00:00:00");
-    final dayString = date.day.toString();
+  // Exibe mensagem de erro
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+
+  // Constrói o cartão de lembrete
+  Widget _buildReminderCard(Map<String, dynamic> reminder) {
+    final date = DateTime.parse(reminder['data']);
     return Card(
       elevation: 4,
       margin: const EdgeInsets.symmetric(vertical: 6),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Row(
+      child: ListTile(
+        leading: Text(
+          date.day.toString(),
+          style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+        ),
+        title: Text(reminder['descricao']),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.pinkAccent.withOpacity(0.2),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                dayString,
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.pinkAccent,
-                ),
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Text(reminder, style: const TextStyle(fontSize: 16)),
-            ),
             IconButton(
               icon: const Icon(Icons.edit, color: Colors.grey),
-              tooltip: "Editar Lembrete",
-              onPressed: () {
-                setState(() {
-                  _selectedDate = date;
-                  _reminderController.text = reminder;
-                });
-                _showReminderDialog(isEditing: true);
-              },
+              onPressed: () => _showReminderDialog(
+                id: reminder['_id'],
+                descricao: reminder['descricao'],
+              ),
             ),
             IconButton(
               icon: const Icon(Icons.delete, color: Colors.grey),
-              tooltip: "Apagar Lembrete",
-              onPressed: () {
-                setState(() {
-                  _reminders.remove(key);
-                });
-              },
+              onPressed: () => _deleteReminder(reminder['_id']),
             ),
           ],
         ),
@@ -126,139 +160,91 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final sortedReminders = _reminders.entries.toList()
-      ..sort((a, b) => DateTime.parse(a.key).compareTo(DateTime.parse(b.key)));
+    final theme = Theme.of(context);
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const Text(
-            "Escolha um dia para adicionar lembretes",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            textAlign: TextAlign.center,
-          ),
-          Divider(
-            color: Colors.pink.shade100,// Cor da linha
-            thickness: 2,       // Espessura da linha
-          ),
-          const SizedBox(height: 20),
-          TableCalendar(
-            locale: "pt_BR",
-            rowHeight: 50,
-            headerStyle: const HeaderStyle(
-              formatButtonVisible: false,
-              titleCentered: true,
-              titleTextStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              leftChevronIcon: Icon(Icons.chevron_left),
-              rightChevronIcon: Icon(Icons.chevron_right),
-            ),
-            calendarStyle: CalendarStyle(
-              todayDecoration: BoxDecoration(
-                color: Colors.pinkAccent.withOpacity(0.3),
-                shape: BoxShape.circle,
-              ),
-              selectedDecoration: BoxDecoration(
-                color: Colors.pinkAccent.withOpacity(0.5),
-                shape: BoxShape.circle,
-              ),
-            ),
-            selectedDayPredicate: (day) => isSameDay(_selectedDate, day),
-            focusedDay: _selectedDate ?? DateTime.now(),
-            firstDay: DateTime.utc(1990, 1, 1),
-            lastDay: DateTime.utc(2040, 1, 1),
-            onDaySelected: _onDaySelected,
-            calendarBuilders: CalendarBuilders(
-              defaultBuilder: (context, day, focusedDay) {
-                final key = _dateKey(day);
-                if (_reminders.containsKey(key)) {
-                  return Container(
-                    margin: const EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                      color: Colors.pinkAccent.withOpacity(0.5),
-                      shape: BoxShape.circle,
-                    ),
-                    alignment: Alignment.center,
-                    child: Text(
-                      '${day.day}',
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                  );
-                }
-                return null;
-              },
-            ),
-          ),
-          const SizedBox(height: 20),
-          Center(
-            child: ElevatedButton.icon(
-              onPressed: () {
-                if (_selectedDate == null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: const Text("Selecione uma data primeiro!"),
-                    ),
-                  );
-                }
-                _showReminderDialog(isEditing: false);
-              },
-              icon: const Icon(Icons.add, size: 30),
-              label: const Text("Adicionar Lembrete", style: TextStyle(fontSize: 16)),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.pink.shade100,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-              ),
-            ),
-          ),
-          const SizedBox(height: 20),
-          if (_reminders.isNotEmpty) ...[
+    return Scaffold(
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
             const Text(
-              "Lembretes",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87),
+              "Escolha um dia para adicionar lembretes",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 10),
-            Builder(
-              builder: (context) {
-                final grouped = <String, List<MapEntry<String, String>>>{};
-                for (final entry in sortedReminders) {
-                  final date = DateTime.parse(entry.key + " 00:00:00");
-                  final monthKey = "${date.year}-${date.month.toString().padLeft(2, '0')}";
-                  grouped.putIfAbsent(monthKey, () => []);
-                  grouped[monthKey]!.add(entry);
-                }
-                final sortedMonthKeys = grouped.keys.toList()
-                  ..sort((a, b) {
-                    final dtA = DateTime.parse("$a-01 00:00:00");
-                    final dtB = DateTime.parse("$b-01 00:00:00");
-                    return dtA.compareTo(dtB);
-                  });
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: sortedMonthKeys.map((monthKey) {
-                    final groupList = grouped[monthKey]!;
-                    final date = DateTime.parse(groupList.first.key + " 00:00:00");
-                    final monthName = DateFormat('MMMM yyyy', 'pt_BR').format(date);
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8),
-                          child: Text(
-                            monthName[0].toUpperCase() + monthName.substring(1),
-                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        ...groupList.map((entry) => _buildReminderCard(entry.key, entry.value)).toList(),
-                      ],
-                    );
-                  }).toList(),
-                );
+            Divider(
+              color: theme.colorScheme.secondary.withOpacity(0.5),
+              thickness: 2,
+            ),
+            const SizedBox(height: 20),
+            TableCalendar(
+              locale: "pt_BR",
+              rowHeight: 50,
+              headerStyle: HeaderStyle(
+                formatButtonVisible: false,
+                titleCentered: true,
+                titleTextStyle: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: theme.colorScheme.primary,
+                ),
+                leftChevronIcon: Icon(Icons.chevron_left, color: theme.colorScheme.primary),
+                rightChevronIcon: Icon(Icons.chevron_right, color: theme.colorScheme.primary),
+              ),
+              calendarStyle: CalendarStyle(
+                todayDecoration: BoxDecoration(
+                  color: theme.colorScheme.secondary.withOpacity(0.2),
+                  shape: BoxShape.circle,
+                ),
+                todayTextStyle: const TextStyle(color: Colors.black),
+                selectedDecoration: BoxDecoration(
+                  color: theme.colorScheme.primary.withOpacity(0.4),
+                  shape: BoxShape.circle,
+                ),
+                defaultTextStyle: TextStyle(color: theme.colorScheme.onSurface),
+                weekendTextStyle: TextStyle(color: theme.colorScheme.secondary),
+              ),
+              selectedDayPredicate: (day) => isSameDay(_selectedDate, day),
+              focusedDay: _selectedDate ?? DateTime.now(),
+              firstDay: DateTime.utc(1990, 1, 1),
+              lastDay: DateTime.utc(2040, 1, 1),
+              onDaySelected: (selectedDay, focusedDay) {
+                setState(() {
+                  _selectedDate = selectedDay;
+                });
               },
             ),
+            const SizedBox(height: 20),
+            Center(
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  if (_selectedDate == null) return;
+                  _showReminderDialog();
+                },
+                icon: const Icon(Icons.add, size: 30, color: Colors.white),
+                label: const Text(
+                  "Adicionar Lembrete",
+                  style: TextStyle(fontSize: 16, color: Colors.white),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: theme.colorScheme.primary.withOpacity(0.8),
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            if (_reminders.isNotEmpty) ...[
+              const Text(
+                "Lembretes",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 10),
+              ..._reminders.map((reminder) => _buildReminderCard(reminder)),
+            ],
           ],
-        ],
+        ),
       ),
     );
   }
