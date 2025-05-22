@@ -4,7 +4,7 @@
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "mongodb": "^6.16.0",
-    "mongoose": "^8.14.1"
+    "mongoose": "^8.15.0"
   },
   "name": "breakforlove_last_update",
   "version": "1.0.0",

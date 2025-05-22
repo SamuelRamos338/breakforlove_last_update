@@ -8,13 +8,13 @@ const port = 3000;
 app.use(cors());
 app.use(express.json());
 
-mongoose.connect('mongodb+srv://breakforlove:breakforlove123@breakforlove.0paxopn.mongodb.net/?retryWrites=true&w=majority&appName=BreakForLove')
+mongoose.connect('mongodb+srv://usermavit:breakdb@breakforlove.wgmfu4b.mongodb.net/?retryWrites=true&w=majority&appName=breakforlove')
   .then(() => console.log('mongoDB Atlas conectado com sucesso'))
   .catch(err => console.error('Erro ao conectar ao mongoDB Atlas', err));
 
 const usuarioRoutes = require('./routes/usuarioRoute');
 app.use('/api/usuario', usuarioRoutes);
-
+ 
 const lembreteRoutes = require('./routes/lembreteRoute');
 app.use('/api/lembrete', lembreteRoutes);
 
