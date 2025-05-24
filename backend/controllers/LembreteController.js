@@ -37,7 +37,7 @@ const LembreteController = {
     
     //#region Atualizar um lembrete
     async atualizarLembrete(req, res) {
-        const { id } = req.params;
+        const { id } = req.query;
         const { descricao, data } = req.body;
         const { conexaoId } = req.params;
 
@@ -66,7 +66,7 @@ const LembreteController = {
 
     //#region Deletar um lembrete
     async deletarLembrete(req, res) {
-        const { id } = req.params;
+        const { id } = req.query;
         const { conexaoId } = req.params;
 
         try {

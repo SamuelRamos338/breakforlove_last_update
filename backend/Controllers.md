@@ -36,7 +36,7 @@
 ---
 
 ## - Atualizar Usuário  
-**Endpoint:** `PUT /usuarios/:id`  
+**Endpoint:** `PUT /atualizar/:id`  
 **Parâmetro:** `id`: id do usuário a ser atualizado  
 **Body:**  
 ```json

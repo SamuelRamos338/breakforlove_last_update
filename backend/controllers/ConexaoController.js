@@ -1,5 +1,7 @@
 const Conexao = require('../models/ConexaoModel.js');
 const Usuario = require('../models/UsuarioModel');
+const CheckList = require('../models/CheckListModel');
+const Lembrete = require('../models/LembreteModel');
 
 const ConexaoController = {
   //#region Criar uma nova solicitação de conexão
@@ -44,6 +46,22 @@ const ConexaoController = {
       });
 
       await novaConexao.save();
+
+      await Conexao.deleteMany({
+        _id: { $ne: novaConexao._id },
+        status: { $in: ['pendente', 'rejeitada'] },
+        $or:  [
+                {
+                  usuario1: novaConexao.usuario1,
+                  usuario2: novaConexao.usuario2
+                },
+                {
+                  usuario1: novaConexao.usuario2,
+                  usuario2: novaConexao.usuario1
+                }
+              ]
+      });
+
       res.status(201).json(novaConexao);
     } catch (err) {
       console.error('Erro ao criar conexão:', err);
@@ -85,6 +103,21 @@ const ConexaoController = {
         Usuario.findByIdAndUpdate(conexao.usuario2, { conexao: conexao._id })
       ]);
 
+      await Conexao.deleteMany({
+        _id: { $ne: id },
+        status: { $in: ['pendente', 'rejeitada'] },
+        $or:  [
+                {
+                  usuario1: conexao.usuario1,
+                  usuario2: conexao.usuario2
+                },
+                {
+                  usuario1: conexao.usuario2,
+                  usuario2: conexao.usuario1
+                }
+              ]
+      });
+
       res.json({ mensagem: 'Conexão aceita com sucesso.', conexao });
     } catch (err) {
       res.status(500).json({ erro: 'Erro ao aceitar conexão.' });
@@ -115,10 +148,15 @@ const ConexaoController = {
     const { usuarioId } = req.params;
 
     try {
+      const user = await Usuario.findOne({ _id : usuarioId});
+      if (!user) {
+        return res.status(404).json({ msg: 'Usuário não encontrado' });
+      }
+
       const pendentes = await Conexao.find({
         status: 'pendente',
         usuario2: usuarioId
-      }).populate('usuario1');
+      }).populate('usuario1', 'nome usuario');
 
       if (pendentes.length === 0) {
         return res.status(404).json({ erro: 'Nenhuma conexão pendente encontrada.' });
@@ -148,7 +186,11 @@ const ConexaoController = {
         Usuario.findByIdAndUpdate(usuario2, { conexao: null })
       ]);
 
-      await Conexao.findByIdAndDelete(conexaoId);
+      await Promise.all([
+        Lembrete.deleteMany({ conexao: conexaoId }),
+        CheckList.deleteMany({ conexao: conexaoId }),
+        Conexao.findByIdAndDelete(conexaoId)
+      ]);
 
       res.status(200).json({ msg: 'Conexão desfeita com sucesso.' });
     } catch (err) {

@@ -1,4 +1,5 @@
 const Usuario = require('../models/UsuarioModel');
+const Design = require('../models/DesignModel');
 const bcrypt = require('bcryptjs');
 
 const UsuarioController = {
@@ -59,7 +60,7 @@ const UsuarioController = {
 
       res.status(200).json({
         msg: 'Login realizado com sucesso',
-        usuario: { id: user._id, nome: user.nome, usuario: user.usuario }
+        usuario: { id: user._id, nome: user.nome, usuario: user.usuario, conexao: user.conexao }
       });
     } catch (error) {
       console.error('Erro no login:', error);

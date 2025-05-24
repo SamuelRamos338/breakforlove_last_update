@@ -9,6 +9,6 @@ router.post('/cadastrar', UsuarioController.cadastrar);
 router.post('/login', UsuarioController.login);
 
 // Atualizar usuário
-router.put('/usuarios/:id', UsuarioController.atualizar);
+router.put('/atualizar/:id', UsuarioController.atualizar);
 
 module.exports = router;

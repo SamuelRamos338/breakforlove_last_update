@@ -74,7 +74,7 @@ const CheckListController = {
 
     //#region Deletar um item de checklist
     async deletarCheckList(req, res) {
-        const { id } = req.params;
+        const { id } = req.query;
         const { conexaoId } = req.params;
 
         try {
